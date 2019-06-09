@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.fzu.facheck.R;
 import com.fzu.facheck.base.RxBaseActivity;
+import com.fzu.facheck.entity.RollCall.LoginInfo;
 import com.fzu.facheck.entity.RollCall.StateInfo;
 import com.fzu.facheck.network.RetrofitHelper;
 import com.fzu.facheck.utils.ConstantUtil;
@@ -51,8 +52,6 @@ public class LoginActivity extends RxBaseActivity {
     Button loginButton;
     @BindView(R.id.remeber_pass)
     CheckBox remeberpass;
-    private SharedPreferences pref;
-    private SharedPreferences.Editor editor;
     @Override
     public int getLayoutId() {
         return R.layout.login_layout;
@@ -60,10 +59,9 @@ public class LoginActivity extends RxBaseActivity {
 
     @Override
     public void initViews(Bundle savedInstanceState) {
-        pref=PreferenceManager.getDefaultSharedPreferences(this);
-        if(pref.getBoolean("remember_password",false)){
-            username.setText(pref.getString("phoneNumber",""));
-            password.setText(pref.getString("password",""));
+        if(PreferenceUtil.getBoolean(ConstantUtil.REMEMBER_PASSWORD,false)){
+            username.setText(PreferenceUtil.getString(ConstantUtil.PHONE_NUMBER,""));
+            password.setText(PreferenceUtil.getString(ConstantUtil.PASSWORD,""));
             remeberpass.setChecked(true);
         }
         else{
@@ -108,11 +106,11 @@ public class LoginActivity extends RxBaseActivity {
                     showProgressBar();
                     //发送请求
                     RequestBody requestBody=RequestBody.create(MediaType.parse("application/json;charset=utf-8"),userobject.toString());
-                    RetrofitHelper.getLoAPI().getserver("login",requestBody)
+                    RetrofitHelper.getLoAPI().get_login_server("login",requestBody)
                             .compose(bindToLifecycle())
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(new Subscriber<StateInfo>() {
+                            .subscribe(new Subscriber<LoginInfo>() {
                                 @Override
                                 public void onCompleted() { }
                                 @Override
@@ -127,18 +125,15 @@ public class LoginActivity extends RxBaseActivity {
                                         ToastUtil.showShort(LoginActivity.this,"请求失败");
                                 }
                                 @Override
-                                public void onNext(StateInfo stateInfo) {
+                                public void onNext(LoginInfo loginInfo) {
                                     hideProgressBar();
-                                    if(stateInfo.code.equals("0100")){
+                                    if(loginInfo.code.equals("0100")){
                                         //登入成功，启动主页面
-                                        PreferenceUtil.putBoolean(ConstantUtil.KEY, true);
-                                        PreferenceUtil.put(ConstantUtil.PHONE_NUMBER, un);
-
-                                        saveData(un,pw,"小明");
+                                        saveData(un,pw,loginInfo.username,loginInfo.isAuthenticated);
                                         Intent intent=new Intent(LoginActivity.this,MainActivity.class);
                                         startActivity(intent);
                                     }
-                                    else if(stateInfo.code.equals("0101"))
+                                    else if(loginInfo.code.equals("0101"))
                                         ToastUtil.showShort(LoginActivity.this,"密码错误");
                                     else
                                         ToastUtil.showShort(LoginActivity.this,"账号不存在");
@@ -165,15 +160,17 @@ public class LoginActivity extends RxBaseActivity {
         circleProgressView.stopSpinning();
         loginButton.setClickable(true);
     }
-    private void saveData(String phone,String password,String name){
-        editor=pref.edit();
+    private void saveData(String phone,String password,String name,boolean authenticated){
+        SharedPreferences.Editor editor=PreferenceUtil.getPreferences().edit();
         if(remeberpass.isChecked())
-            editor.putBoolean("remember_password",true);
+            editor.putBoolean(ConstantUtil.REMEMBER_PASSWORD,true);
         else
-            editor.putBoolean("remember_password",false);
-        editor.putString("phoneNumber",phone);
-        editor.putString("password",password);
-        editor.putString("username",name);
+            editor.putBoolean(ConstantUtil.REMEMBER_PASSWORD,false);
+        editor.putBoolean(ConstantUtil.KEY, true);
+        editor.putString(ConstantUtil.PHONE_NUMBER,phone);
+        editor.putString(ConstantUtil.PASSWORD,password);
+        editor.putString(ConstantUtil.EXTRA_NAME,name);
+        editor.putBoolean(ConstantUtil.AUTHENTICATED,authenticated);
         editor.apply();
     }
 }

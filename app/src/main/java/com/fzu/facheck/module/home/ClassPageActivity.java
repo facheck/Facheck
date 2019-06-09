@@ -1,15 +1,16 @@
 package com.fzu.facheck.module.home;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -17,7 +18,9 @@ import com.fzu.facheck.R;
 import com.fzu.facheck.adapter.section.HomeClassInfoSection;
 import com.fzu.facheck.base.RxBaseActivity;
 import com.fzu.facheck.entity.RollCall.ClassInfo;
+import com.fzu.facheck.entity.RollCall.StateInfo;
 import com.fzu.facheck.network.RetrofitHelper;
+import com.fzu.facheck.utils.ToastUtil;
 import com.fzu.facheck.widget.CustomEmptyView;
 import com.fzu.facheck.widget.sectioned.SectionedRecyclerViewAdapter;
 
@@ -25,6 +28,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
@@ -55,6 +59,8 @@ public class ClassPageActivity extends RxBaseActivity {
     ImageView classView;
     @BindView(R.id.the_teacher)
     TextView teacherName;
+    @BindView(R.id.delete_the_class)
+    LinearLayout delete_Linear;
     private ClassInfo result=new ClassInfo();
     private boolean mIsRefreshing = false;
     private SectionedRecyclerViewAdapter mSectionedAdapter;
@@ -71,6 +77,8 @@ public class ClassPageActivity extends RxBaseActivity {
         master=intent.getBooleanExtra("master",false);
         Glide.with(this).load(R.mipmap.class_icon).bitmapTransform(new RoundedCornersTransformation(this
                 ,28,1,RoundedCornersTransformation.CornerType.ALL)).into(classView);
+        if(!master)
+            delete_Linear.setVisibility(View.GONE);
         initToolBar();
         initRefreshLayout();
         initRecyclerView();
@@ -130,12 +138,14 @@ public class ClassPageActivity extends RxBaseActivity {
                     }
                     @Override
                     public void onNext(ClassInfo classInfo) {
-                        if(classInfo.code.equals("1100")){
+                        if(classInfo.code.equals("1500")){
                             result=classInfo;
                             teacherName.setText("任课教师:"+classInfo.teacherName);
                             codeText.setText("邀请码:"+classInfo.classCode);
                             timeText.setText("课程时间："+classInfo.startTime+"——"+classInfo.endTime);
                             finishTask();
+                        }else{
+                            initEmptyView();
                         }
                     }
                 });
@@ -172,5 +182,59 @@ public class ClassPageActivity extends RxBaseActivity {
     }
     private void setRecycleNoScroll() {
         mRecyclerView.setOnTouchListener((v, event) -> mIsRefreshing);
+    }
+    @OnClick({R.id.delete_the_class})
+    public void onClick(View v){
+        switch (v.getId()){
+            case R.id.delete_the_class:
+                showDialog();
+                break;
+        }
+    }
+    private void showDialog(){
+        AlertDialog.Builder dialog=new AlertDialog.Builder(this,R.style.AlertDialog);
+        dialog.setMessage("确定删除班级："+classname);
+        dialog.setCancelable(false);
+        dialog.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                final JSONObject userobject=new JSONObject();
+                try {
+                    userobject.put("classId",classid);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                RequestBody requestBody=RequestBody.create(MediaType.parse("application/json;charset=utf-8"),userobject.toString());
+                RetrofitHelper.getClassInfo().removeclass("remove_class",requestBody)
+                        .compose(bindToLifecycle())
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Subscriber<StateInfo>() {
+                            @Override
+                            public void onCompleted() {
+                            }
+                            @Override
+                            public void onError(Throwable e) {
+                                ToastUtil.showShort(ClassPageActivity.this,"请求失败");
+                            }
+                            @Override
+                            public void onNext(StateInfo stateInfo) {
+                                if(stateInfo.code.equals("1700")) {
+                                    ToastUtil.showShort(ClassPageActivity.this, "删除成功");
+                                    finish();
+                                }
+                                else
+                                    ToastUtil.showShort(ClassPageActivity.this,"删除失败");
+                            }
+                        });
+            }
+        });
+        dialog.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
     }
 }

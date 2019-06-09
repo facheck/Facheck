@@ -1,9 +1,8 @@
 package com.fzu.facheck.module.home;
 
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -12,12 +11,12 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.fzu.facheck.R;
-import com.fzu.facheck.adapter.section.HomeClassPageSection;
 import com.fzu.facheck.adapter.section.SearchClassSection;
 import com.fzu.facheck.base.RxBaseActivity;
 import com.fzu.facheck.entity.RollCall.SearchClassInfo;
 import com.fzu.facheck.network.RetrofitHelper;
-import com.fzu.facheck.utils.SnackbarUtil;
+import com.fzu.facheck.utils.ConstantUtil;
+import com.fzu.facheck.utils.PreferenceUtil;
 import com.fzu.facheck.utils.ToastUtil;
 import com.fzu.facheck.widget.CustomEmptyView;
 import com.fzu.facheck.widget.sectioned.SectionedRecyclerViewAdapter;
@@ -29,8 +28,6 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
-import retrofit2.adapter.rxjava.HttpException;
-import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -44,6 +41,8 @@ public class SearchActivity extends RxBaseActivity {
     CustomEmptyView mCustomEmptyView;
     @BindView(R.id.hintEmpty)
     TextView hintText;
+    @BindView(R.id.result_hint)
+    TextView rhintText;
     public String phoneNumber;
     private SectionedRecyclerViewAdapter mSectionedAdapter;
     private SearchClassInfo results=new SearchClassInfo();
@@ -56,6 +55,7 @@ public class SearchActivity extends RxBaseActivity {
         initRecyclerView();
         mCustomEmptyView.setVisibility(View.GONE);
         hintText.setVisibility(View.GONE);
+        rhintText.setVisibility(View.GONE);
     }
     @Override
     public void initToolBar() {
@@ -73,15 +73,14 @@ public class SearchActivity extends RxBaseActivity {
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mSectionedAdapter);
     }
-    @OnClick({R.id.cancel_search,R.id.search})
+    @OnClick({R.id.cancel_search,R.id.search_classes})
     public void onClick(View view){
         switch (view.getId()){
             case R.id.cancel_search:
                 finish();
                 break;
-            case R.id.search:
-                SharedPreferences pref=PreferenceManager.getDefaultSharedPreferences(this);
-                phoneNumber=pref.getString("phoneNumber","");
+            case R.id.search_classes:
+                phoneNumber=PreferenceUtil.getString(ConstantUtil.PHONE_NUMBER,"");
                 String inputtext=searchText.getText().toString();
                 if(TextUtils.isEmpty(inputtext))
                     ToastUtil.showShort(this,"请输入搜索信息");
@@ -89,25 +88,28 @@ public class SearchActivity extends RxBaseActivity {
                     final JSONObject userobject=new JSONObject();
                     try {
                         userobject.put("phoneNumber",phoneNumber);
-                        userobject.put("classid",inputtext);
+                        userobject.put("className",inputtext);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                     RequestBody requestBody=RequestBody.create(MediaType.parse("application/json;charset=utf-8"),userobject.toString());
-                    RetrofitHelper.getClassInfo().searchclass("search",requestBody)
+                    RetrofitHelper.getClassInfo().searchclass("search_class",requestBody)
                             .compose(bindToLifecycle())
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe(resultbean->{
                                 clearData();
                                 results=resultbean;
-                                if(results.getResultClasses()==null){
-                                    mCustomEmptyView.setVisibility(View.GONE);
-                                    mRecyclerView.setVisibility(View.GONE);
-                                    hintText.setVisibility(View.VISIBLE);
+                                if(results.code.equals("1300")) {
+                                    if (results.getResultClasses() == null || results.getResultClasses().size() == 0) {
+                                        rhintText.setVisibility(View.GONE);
+                                        mCustomEmptyView.setVisibility(View.GONE);
+                                        mRecyclerView.setVisibility(View.GONE);
+                                        hintText.setVisibility(View.VISIBLE);
+                                    } else {
+                                        finishTask();
+                                    }
                                 }
-                                else
-                                    finishTask();
                             },throwable -> {
                                 throwable.printStackTrace();initEmptyView();});
                 }
@@ -115,6 +117,7 @@ public class SearchActivity extends RxBaseActivity {
         }
     }
     public void initEmptyView() {
+        rhintText.setVisibility(View.GONE);
         mCustomEmptyView.setVisibility(View.VISIBLE);
         mRecyclerView.setVisibility(View.GONE);
         hintText.setVisibility(View.GONE);
@@ -128,6 +131,7 @@ public class SearchActivity extends RxBaseActivity {
     }
     @Override
     public void finishTask() {
+        rhintText.setVisibility(View.VISIBLE);
         hideEmptyView();
         mSectionedAdapter.addSection(new SearchClassSection(results,this));
         mSectionedAdapter.notifyDataSetChanged();

@@ -3,6 +3,7 @@
     android:orientation="vertical"
     android:fitsSystemWindows="true"
     android:layout_width="match_parent"
+    android:background="@color/background_light"
     android:layout_height="match_parent">
     <RelativeLayout
         android:layout_width="match_parent"
@@ -52,7 +53,7 @@
        android:layout_height="wrap_content">
        <LinearLayout
            android:layout_width="match_parent"
-           android:layout_height="1dp"
+           android:layout_height="@dimen/line_height"
            android:background="@color/gray"/>
        <RelativeLayout
            android:layout_width="match_parent"
@@ -80,36 +81,9 @@
                android:hint="请输入班级名称"
                android:layout_height="wrap_content" />
        </RelativeLayout>
-       <!--<LinearLayout-->
-           <!--android:layout_width="match_parent"-->
-           <!--android:layout_height="1dp"-->
-           <!--android:layout_marginHorizontal="10dp"-->
-           <!--android:background="@color/gray"/>-->
-       <!--<RelativeLayout-->
-           <!--android:layout_width="match_parent"-->
-           <!--android:background="@color/white"-->
-           <!--android:layout_height="40dp">-->
-           <!--<TextView-->
-               <!--android:layout_width="wrap_content"-->
-               <!--android:layout_centerInParent="true"-->
-               <!--android:layout_marginHorizontal="10dp"-->
-               <!--android:layout_alignParentLeft="true"-->
-               <!--android:textSize="15dp"-->
-               <!--android:layout_height="wrap_content"-->
-               <!--android:text="每节课的课时数"/>-->
-           <!--<TextView-->
-               <!--android:id="@+id/per_class_time"-->
-               <!--android:layout_width="wrap_content"-->
-               <!--android:layout_centerInParent="true"-->
-               <!--android:layout_alignParentRight="true"-->
-               <!--android:textSize="15dp"-->
-               <!--android:layout_marginHorizontal="10dp"-->
-               <!--android:text="请输入课时数 >"-->
-               <!--android:layout_height="wrap_content" />-->
-       <!--</RelativeLayout>-->
        <LinearLayout
            android:layout_width="match_parent"
-           android:layout_height="1dp"
+           android:layout_height="@dimen/line_height"
            android:layout_marginHorizontal="10dp"
            android:background="@color/gray"/>
        <RelativeLayout
@@ -126,18 +100,17 @@
                android:text="每周上课时间"/>
            <TextView
                android:id="@+id/the_work_date"
-               android:layout_width="128dp"
+               android:layout_width="wrap_content"
                android:layout_centerInParent="true"
                android:layout_alignParentRight="true"
                android:textSize="15dp"
-               android:scrollbars="horizontal"
-               android:maxLines="1"
-               android:text="请输入上课时间 >"
+               android:layout_marginHorizontal="10dp"
+               android:text="未设置 >"
                android:layout_height="wrap_content" />
        </RelativeLayout>
        <LinearLayout
            android:layout_width="match_parent"
-           android:layout_height="1dp"
+           android:layout_height="@dimen/line_height"
            android:layout_marginHorizontal="10dp"
            android:background="@color/gray"/>
        <RelativeLayout
@@ -159,12 +132,12 @@
                android:layout_alignParentRight="true"
                android:textSize="15dp"
                android:layout_marginHorizontal="10dp"
-               android:text="请输入开始时间 >"
+               android:text="未设置 >"
                android:layout_height="wrap_content" />
        </RelativeLayout>
        <LinearLayout
            android:layout_width="match_parent"
-           android:layout_height="1dp"
+           android:layout_height="@dimen/line_height"
            android:layout_marginHorizontal="10dp"
            android:background="@color/gray"/>
        <RelativeLayout
@@ -186,70 +159,12 @@
                android:layout_alignParentRight="true"
                android:textSize="15dp"
                android:layout_marginHorizontal="10dp"
-               android:text="请输入结束时间 >"
+               android:text="未设置 >"
                android:layout_height="wrap_content" />
        </RelativeLayout>
-       <!--<LinearLayout-->
-           <!--android:layout_width="match_parent"-->
-           <!--android:layout_height="1dp"-->
-           <!--android:layout_marginHorizontal="10dp"-->
-           <!--android:background="@color/gray"/>-->
-       <!--<RelativeLayout-->
-           <!--android:layout_width="match_parent"-->
-           <!--android:background="@color/white"-->
-           <!--android:layout_height="40dp">-->
-           <!--<TextView-->
-               <!--android:layout_width="wrap_content"-->
-               <!--android:layout_centerInParent="true"-->
-               <!--android:layout_marginHorizontal="10dp"-->
-               <!--android:layout_alignParentLeft="true"-->
-               <!--android:textSize="15dp"-->
-               <!--android:layout_height="wrap_content"-->
-               <!--android:text="重复"/>-->
-           <!--<TextView-->
-               <!--android:id="@+id/the_repeat"-->
-               <!--android:layout_width="wrap_content"-->
-               <!--android:layout_centerInParent="true"-->
-               <!--android:layout_alignParentRight="true"-->
-               <!--android:textSize="15dp"-->
-               <!--android:layout_marginHorizontal="10dp"-->
-               <!--android:text="无 >"-->
-               <!--android:layout_height="wrap_content" />-->
-       <!--</RelativeLayout>-->
-       <!--<LinearLayout-->
-           <!--android:layout_width="match_parent"-->
-           <!--android:layout_height="1dp"-->
-           <!--android:layout_marginHorizontal="10dp"-->
-           <!--android:background="@color/gray"/>-->
-       <!--<RelativeLayout-->
-           <!--android:layout_width="match_parent"-->
-           <!--android:background="@color/white"-->
-           <!--android:layout_height="40dp">-->
-           <!--<TextView-->
-               <!--android:layout_width="wrap_content"-->
-               <!--android:layout_centerInParent="true"-->
-               <!--android:layout_marginHorizontal="10dp"-->
-               <!--android:layout_alignParentLeft="true"-->
-               <!--android:textSize="15dp"-->
-               <!--android:layout_height="wrap_content"-->
-               <!--android:text="总共课节数"/>-->
-           <!--<EditText-->
-               <!--android:id="@+id/total_class_time"-->
-               <!--android:layout_width="wrap_content"-->
-               <!--android:layout_centerInParent="true"-->
-               <!--android:layout_alignParentRight="true"-->
-               <!--android:gravity="right"-->
-               <!--android:inputType="text"-->
-               <!--android:lines="1"-->
-               <!--android:background="@null"-->
-               <!--android:textSize="15dp"-->
-               <!--android:layout_marginHorizontal="10dp"-->
-               <!--android:hint="请输入课节数"-->
-               <!--android:layout_height="wrap_content" />-->
-       <!--</RelativeLayout>-->
        <LinearLayout
            android:layout_width="match_parent"
-           android:layout_height="1dp"
+           android:layout_height="@dimen/line_height"
            android:layout_marginHorizontal="10dp"
            android:background="@color/gray"/>
        <RelativeLayout
@@ -280,7 +195,7 @@
        </RelativeLayout>
        <LinearLayout
            android:layout_width="match_parent"
-           android:layout_height="1dp"
+           android:layout_height="@dimen/line_height"
            android:background="@color/gray"/>
    </LinearLayout>
     <TextView
@@ -289,7 +204,7 @@
         android:text="默认加入课表"
         android:gravity="center"
         android:textSize="15dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="6dp"
         android:layout_marginBottom="6dp"
         android:textColor="@color/gray_80" />
 </LinearLayout>

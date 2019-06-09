@@ -74,13 +74,16 @@ public class HomeClassPageSection extends StatelessSection {
             case JOINTED_DATA:
                 final RollCallInfo.ClassInfoBean.JoinedClassDataBean joinedClassDataBean = jointedData.get(position);
                 if(position==0){
-                    itemViewHolder.bottomlinear.setVisibility(View.GONE);
+                    if(position==jointedData.size()-1)
+                        itemViewHolder.midlinear.setVisibility(View.GONE);
+                    else
+                        itemViewHolder.bottomlinear.setVisibility(View.GONE);
                 }
                 else if(position==jointedData.size()-1){
                     itemViewHolder.toplinear.setVisibility(View.GONE);
                     itemViewHolder.midlinear.setVisibility(View.GONE);
                 }
-               else{
+                else{
                     itemViewHolder.bottomlinear.setVisibility(View.GONE);
                     itemViewHolder.toplinear.setVisibility(View.GONE);
                 }
@@ -98,7 +101,10 @@ public class HomeClassPageSection extends StatelessSection {
             case CREATE_DATA:
                 final RollCallInfo.ClassInfoBean.ManagedClassDataBean managedClassData = createdData.get(position);
                 if(position==0){
-                    itemViewHolder.bottomlinear.setVisibility(View.GONE);
+                    if(position==createdData.size()-1)
+                        itemViewHolder.midlinear.setVisibility(View.GONE);
+                    else
+                        itemViewHolder.bottomlinear.setVisibility(View.GONE);
                 }
                 else if(position==createdData.size()-1){
                     itemViewHolder.toplinear.setVisibility(View.GONE);
@@ -140,16 +146,18 @@ public class HomeClassPageSection extends StatelessSection {
                 case JOINTED_DATA:
                     if(jointedData!=null&&jointedData.size()>0){
                         footerViewHolder.hintText.setVisibility(View.GONE);
+                        footerViewHolder.linearLayout.setVisibility(View.GONE);
                     }
                     else
-                        footerViewHolder.hintText.setText("您还未加入班级");
+                        footerViewHolder.hintText.setText("您还未加入班级!");
                     break;
                 case CREATE_DATA:
                     if(createdData!=null&&createdData.size()>0) {
                         footerViewHolder.hintText.setVisibility(View.GONE);
+                        footerViewHolder.linearLayout.setVisibility(View.GONE);
                     }
                     else
-                        footerViewHolder.hintText.setText("您还未创建过班级");
+                        footerViewHolder.hintText.setText("您还未创建过班级!");
                     break;
             }
         }

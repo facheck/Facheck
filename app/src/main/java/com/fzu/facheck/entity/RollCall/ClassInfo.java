@@ -1,5 +1,6 @@
 package com.fzu.facheck.entity.RollCall;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ClassInfo {
@@ -43,9 +44,17 @@ public class ClassInfo {
 
     }
     public List<Student> getStudents(){
-        return studentList;
+        List<Student> st=new ArrayList<Student>();
+        if(studentList==null)
+            return st;
+        else
+            return studentList;
     }
     public List<Record> getRecords(){
-        return recordList;
+        List<Record> re=new ArrayList<Record>();
+        if(recordList==null)
+            return re;
+        else
+            return recordList;
     }
 }

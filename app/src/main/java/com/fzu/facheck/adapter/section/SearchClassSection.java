@@ -51,7 +51,7 @@ public class SearchClassSection extends StatelessSection {
         ItemViewHolder itemViewHolder=(ItemViewHolder)holder;
         final SearchClassInfo.ResultClass resultClass=resultClasses.get(position);
         itemViewHolder.mClassName.setText(resultClass.getClassName());
-        itemViewHolder.mClassDuration.setText(resultClass.getClassTime());
+        itemViewHolder.mClassDuration.setText("任课教师："+resultClass.getTeacherName());
         if(resultClass.getState()){
             itemViewHolder.mBtn.setText("已加入");
             itemViewHolder.mBtn.setBackgroundResource(R.drawable.btn_rollcall_gray);
@@ -91,7 +91,7 @@ public class SearchClassSection extends StatelessSection {
                 final JSONObject userobject=new JSONObject();
                 try {
                     userobject.put("phoneNumber",((SearchActivity)mContext).phoneNumber);
-                    userobject.put("classid",id);
+                    userobject.put("classId",id);
                     userobject.put("classCode",pass);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -102,12 +102,21 @@ public class SearchClassSection extends StatelessSection {
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(resultbean->{
-                            if(resultbean.code.equals("xxxx")){
+                            if(resultbean.code.equals("0600")){
                                 ToastUtil.showShort(mContext,"加入成功");
                                 dialog.dismiss();
                                 ((SearchActivity) mContext).finish();
-                            }else{
-                                ToastUtil.showShort(mContext,"加入失败");
+                            }else if(resultbean.code.equals("0602")){
+                                ToastUtil.showShort(mContext,"邀请码错误");
+                                dialog.dismiss();
+                            }else if(resultbean.code.equals("0603")){
+                                ToastUtil.showShort(mContext,"您还未进行身份认证");
+                                dialog.dismiss();
+                            }else if(resultbean.equals("0601")){
+                                ToastUtil.showShort(mContext,"已经加入班级");
+                                dialog.dismiss();
+                            }else {
+                                ToastUtil.showShort(mContext, "未知情况错误");
                                 dialog.dismiss();
                             }
                         },throwable ->{ ToastUtil.showShort(mContext,"加入失败");dialog.dismiss();});

@@ -1,9 +1,7 @@
 package com.fzu.facheck.module.home;
 
-import android.app.Activity;
-import android.content.SharedPreferences;
+import android.content.Intent;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -22,8 +20,9 @@ import com.bigkoo.pickerview.view.TimePickerView;
 import com.fzu.facheck.R;
 import com.fzu.facheck.base.RxBaseActivity;
 import com.fzu.facheck.entity.RollCall.CreateClassInfo;
-import com.fzu.facheck.module.common.MainActivity;
 import com.fzu.facheck.network.RetrofitHelper;
+import com.fzu.facheck.utils.ConstantUtil;
+import com.fzu.facheck.utils.PreferenceUtil;
 import com.fzu.facheck.utils.TimeUtil;
 import com.fzu.facheck.utils.ToastUtil;
 
@@ -56,7 +55,8 @@ public class CreateClassActivity extends RxBaseActivity {
     EditText codeText;
     @BindView(R.id.the_work_date)
     TextView worddateText;
-    List<String> wordData=new ArrayList<>();
+    ArrayList<String> wordData=new ArrayList<>();
+    private static final int SET_TIME = 1;
     @Override
     public int getLayoutId() {
         return R.layout.layout_create_calss;
@@ -84,7 +84,9 @@ public class CreateClassActivity extends RxBaseActivity {
                 selectTime(endtimeText);
                 break;
             case R.id.the_work_date:
-                showupPopWindow();
+                Intent intent=new Intent(CreateClassActivity.this,SelectClassTimeActivity.class);
+                intent.putStringArrayListExtra("times",wordData);
+                startActivityForResult(intent,SET_TIME);
                 break;
             case R.id.cancel:
                 finish();
@@ -123,14 +125,12 @@ public class CreateClassActivity extends RxBaseActivity {
         String begintime=begintimeText.getText().toString();
         String endtime=endtimeText.getText().toString();
         String code=codeText.getText().toString();
-        String worddate=worddateText.getText().toString();
-        if(TextUtils.isEmpty(classname)||TextUtils.isEmpty(code))
+        String worddate=getTime();
+        if(TextUtils.isEmpty(classname)||TextUtils.isEmpty(code)||worddate==null)
             ToastUtil.showShort(CreateClassActivity.this,"请填入完整信息");
-        else if(begintime.equals("请输入开始时间 >")||endtime.equals("请输入结束时间 >")||
-                worddate.equals("请输入上课时间 >"))
+        else if(begintime.equals("未设置 >")||endtime.equals("未设置 >"))
             ToastUtil.showShort(CreateClassActivity.this,"请填入完整信息");
         else{
-            SharedPreferences pref=PreferenceManager.getDefaultSharedPreferences(this);
             final JSONObject classobject=new JSONObject();
             try {
                 classobject.put("className",classname);
@@ -138,7 +138,7 @@ public class CreateClassActivity extends RxBaseActivity {
                 classobject.put("classCode",code);
                 classobject.put("startTime",begintime);
                 classobject.put("endTime",endtime);
-                classobject.put("phoneNumber",pref.getString("phoneNumber",""));
+                classobject.put("phoneNumber",PreferenceUtil.getString(ConstantUtil.PHONE_NUMBER,""));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -156,7 +156,7 @@ public class CreateClassActivity extends RxBaseActivity {
                         public void onNext(CreateClassInfo classInfo) {
                             if(classInfo.code.equals("0500")){
                                 wordData.clear();
-                                ToastUtil.showShort(CreateClassActivity.this,"创建成功 "+classInfo.getClassID());
+                                ToastUtil.showShort(CreateClassActivity.this,"创建成功");
                                 finish();
                             }
                             else if(classInfo.code.equals("0501"))
@@ -167,51 +167,82 @@ public class CreateClassActivity extends RxBaseActivity {
                     });
         }
     }
-    private void showupPopWindow(){
-        View contentView=LayoutInflater.from(this).inflate(R.layout.popupwin_layout,null);
-        PopupWindow mpopWindow=new PopupWindow(contentView, ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT,true);
-        mpopWindow.setContentView(contentView);
-        TextView tv1=(TextView)contentView.findViewById(R.id.select_one);
-        tv1.setText("添加");
-        TextView tv2=(TextView)contentView.findViewById(R.id.select_two);
-        tv2.setText("清除");
-        TextView tv3=(TextView)contentView.findViewById(R.id.cancel_select);
-        tv1.setOnClickListener((v)->{
-            mpopWindow.dismiss();
-            selectWordDate();
-        });
-        tv2.setOnClickListener((v)->{
-            worddateText.setText("请输入上课时间 >");
-            wordData.clear();
-            mpopWindow.dismiss();
-        });
-        tv3.setOnClickListener((v)->{
-            mpopWindow.dismiss();
-        });
-        View rootView=LayoutInflater.from(this).inflate(R.layout.activity_main,null);
-        mpopWindow.showAtLocation(rootView,Gravity.BOTTOM,0,0);
-    }
-    private void selectWordDate(){
-        String[] week={"星期一","星期二","星期三","星期四","星期五","星期六","星期日"};
-        String[] duringtime={"上午8:20-10:00","上午10:20-12:00","下午14:00-15:40","下午15:50-17:30"
-                ,"晚上19:00-20:40"};
-        OptionsPickerView pvOptions=new OptionsPickerBuilder(this, new OnOptionsSelectListener() {
-            @Override
-            public void onOptionsSelect(int options1, int options2, int options3, View v) {
-                wordData.add(week[options1]+" "+duringtime[options2]);
-                String s="";
-                for(String dt:wordData)
-                    s=s+dt+";";
-                worddateText.setText(s);
+//    private void showupPopWindow(){
+//        View contentView=LayoutInflater.from(this).inflate(R.layout.popupwin_layout,null);
+//        PopupWindow mpopWindow=new PopupWindow(contentView, ViewGroup.LayoutParams.WRAP_CONTENT,
+//                ViewGroup.LayoutParams.WRAP_CONTENT,true);
+//        mpopWindow.setContentView(contentView);
+//        TextView tv1=(TextView)contentView.findViewById(R.id.select_one);
+//        tv1.setText("添加");
+//        TextView tv2=(TextView)contentView.findViewById(R.id.select_two);
+//        tv2.setText("清除");
+//        TextView tv3=(TextView)contentView.findViewById(R.id.cancel_select);
+//        tv1.setOnClickListener((v)->{
+//            mpopWindow.dismiss();
+//            selectWordDate();
+//        });
+//        tv2.setOnClickListener((v)->{
+//            worddateText.setText("未设置 >");
+//            wordData.clear();
+//            mpopWindow.dismiss();
+//        });
+//        tv3.setOnClickListener((v)->{
+//            mpopWindow.dismiss();
+//        });
+//        View rootView=LayoutInflater.from(this).inflate(R.layout.activity_main,null);
+//        mpopWindow.showAtLocation(rootView,Gravity.BOTTOM,0,0);
+//    }
+//    private void selectWordDate(){
+//        String[] week={"星期一","星期二","星期三","星期四","星期五","星期六","星期日"};
+//        String[] duringtime={"上午8:20-10:00","上午10:20-12:00","下午14:00-15:40","下午15:50-17:30"
+//                ,"晚上19:00-20:40"};
+//        OptionsPickerView pvOptions=new OptionsPickerBuilder(this, new OnOptionsSelectListener() {
+//            @Override
+//            public void onOptionsSelect(int options1, int options2, int options3, View v) {
+//                wordData.add(week[options1]+" "+duringtime[options2]);
+//                String s="";
+//                for(String dt:wordData)
+//                    s=s+dt+";";
+//                worddateText.setText(s);
+//            }
+//        }).setTitleText("上课时间")
+//                .setCancelText("取消")
+//                .setSubmitText("确定")
+//                .setOutSideCancelable(false)
+//                .setSelectOptions(4)
+//                .build();
+//        pvOptions.setNPicker(Arrays.asList(week),Arrays.asList(duringtime),null);
+//        pvOptions.show();
+//    }
+    private String getTime(){
+        String s="";
+        if(wordData.size()==0)
+            return null;
+        else{
+            for(int i=0;i<wordData.size();i++){
+                s+=wordData.get(i);
+                if(i!=wordData.size()-1)
+                    s+=";";
             }
-        }).setTitleText("上课时间")
-                .setCancelText("取消")
-                .setSubmitText("确定")
-                .setOutSideCancelable(false)
-                .setSelectOptions(4)
-                .build();
-        pvOptions.setNPicker(Arrays.asList(week),Arrays.asList(duringtime),null);
-        pvOptions.show();
+        }
+        return s;
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode){
+            case SET_TIME:
+                if(resultCode==RESULT_OK){
+                    if(data!=null) {
+                        wordData = data.getStringArrayListExtra("times");
+                        if(wordData!=null&&wordData.size()!=0)
+                            worddateText.setText("已设置 >");
+                        else
+                            worddateText.setText("未设置 >");
+                    }
+                }
+                break;
+            default:
+                break;
+        }
     }
 }

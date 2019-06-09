@@ -22,6 +22,8 @@ import com.fzu.facheck.base.RxLazyFragment;
 import com.fzu.facheck.entity.RollCall.RollCallInfo;
 import com.fzu.facheck.module.common.MainActivity;
 import com.fzu.facheck.network.RetrofitHelper;
+import com.fzu.facheck.utils.ConstantUtil;
+import com.fzu.facheck.utils.PreferenceUtil;
 import com.fzu.facheck.widget.CustomEmptyView;
 import com.fzu.facheck.widget.sectioned.SectionedRecyclerViewAdapter;
 
@@ -138,11 +140,9 @@ public class HomeClassPageFragment extends RxLazyFragment {
 
     @Override
     protected void loadData() {
-        SharedPreferences pref=PreferenceManager.getDefaultSharedPreferences(getActivity());
         JSONObject userobject=new JSONObject();
         try {
-//            userobject.put("phoneNumber",pref.getString("phoneNumber",""));
-            userobject.put("phoneNumber","13215000002");
+            userobject.put("phoneNumber",PreferenceUtil.getString(ConstantUtil.PHONE_NUMBER,""));
         } catch (JSONException e) {
             e.printStackTrace();
         }

@@ -83,8 +83,19 @@
         <item name="android:windowIsTranslucent">true</item>
 
     </style>
-
-
+    //对话框风格
+    <style name="AlertDialog" parent="@style/Theme.AppCompat.Light.Dialog">
+        <item name="buttonBarPositiveButtonStyle">@style/positive</item>
+        <item name="buttonBarNegativeButtonStyle">@style/negative</item>
+    </style>
+    <style name="positive">
+        <item name="android:textColor">@color/black_alpha_60</item>
+        <item name="android:background">@color/white</item>
+    </style>
+    <style name="negative">
+        <item name="android:textColor">@color/black_alpha_60</item>
+        <item name="android:background">@color/white</item>
+    </style>
 
 
 </resources>

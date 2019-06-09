@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
+    android:background="@color/background_light"
     android:fitsSystemWindows="true"
     android:layout_height="match_parent">
     <include layout="@layout/layout_toolbar" />
@@ -54,7 +55,7 @@
                     android:id="@+id/the_class_time"
                     android:text="课程时间：2019-12-1——2019-20-12"
                     android:layout_marginLeft="30dp"
-                    android:layout_marginBottom="2dp"
+                    android:layout_marginBottom="4dp"
                     android:textSize="12dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
@@ -70,6 +71,31 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center" />
+            <LinearLayout
+                android:id="@+id/delete_the_class"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="25dp"
+                    android:layout_height="@dimen/line_height"
+                    android:background="@color/gray">
+                </LinearLayout>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:text="删除班级"
+                    android:gravity="center"
+                    android:textColor="@color/colorAccent"
+                    android:background="@color/white"
+                    android:textSize="18dp"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/line_height"
+                    android:background="@color/gray">
+                </LinearLayout>
+            </LinearLayout>
         </LinearLayout>
     </android.support.v4.widget.SwipeRefreshLayout>
 </LinearLayout>
