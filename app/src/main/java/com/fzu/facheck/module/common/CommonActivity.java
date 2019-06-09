@@ -10,7 +10,6 @@ import android.widget.TextView;
 
 import com.fzu.facheck.R;
 import com.fzu.facheck.base.RxBaseActivity;
-import com.fzu.facheck.module.home.IdentityFragment;
 import com.fzu.facheck.module.home.TheAboutFragment;
 import com.fzu.facheck.utils.ToastUtil;
 
@@ -35,10 +34,6 @@ public class CommonActivity extends RxBaseActivity {
         switch (flag){
             case 0:
                 ToastUtil.showShort(this,"程序运行出错");
-                break;
-            case 1:
-                title="身份认证";
-                replaceFragment(new IdentityFragment());
                 break;
             case 2:
                 title="关于我们";

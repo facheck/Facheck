@@ -36,7 +36,6 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:hardwareAccelerated="false"
         android:largeHeap="true"
         android:theme="@style/AppTheme">
         <meta-data
@@ -106,6 +105,10 @@
             android:screenOrientation="portrait" />
         <activity android:name=".module.home.StudentinfoActivity"
             android:screenOrientation="portrait"></activity>
+        <activity android:name=".module.home.SelectClassTimeActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".module.home.IdentifyActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

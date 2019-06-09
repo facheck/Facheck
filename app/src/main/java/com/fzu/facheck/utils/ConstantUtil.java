@@ -44,7 +44,11 @@ public class ConstantUtil {
     public static final String EXTRA_RID = "extra_rid";
     public static final String EXTRA_POSITION = "extra_pos";
     public static final int ADVERTISING_RID = 165;
+
     public static final String PHONE_NUMBER = "phone_number";
+    public static final String PASSWORD="pass_word";
+    public static final String REMEMBER_PASSWORD="remember_password";
+    public static final String AUTHENTICATED="authenticated";
 
     public static final int RC_CAMERA__CALENDAR_STORAGE_PHONE_LOCATION = 7000;
 

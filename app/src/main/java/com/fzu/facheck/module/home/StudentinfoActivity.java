@@ -1,5 +1,7 @@
 package com.fzu.facheck.module.home;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -80,20 +82,20 @@ public class StudentinfoActivity extends RxBaseActivity {
         final JSONObject userobject=new JSONObject();
         try {
             userobject.put("phoneNumber",phoneNumber);
-            userobject.put("classid",classid);
+            userobject.put("classId",classid);
         } catch (JSONException e) {
             e.printStackTrace();
         }
         RequestBody requestBody=RequestBody.create(MediaType.parse("application/json;charset=utf-8"),userobject.toString());
         RetrofitHelper.getStudentInfo()
-                .getclassserver("get_student_info",requestBody)
+                .getclassserver("get_single_attendance",requestBody)
                 .compose(bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(resultbean->{
-                    if(resultbean.code.equals("1000")){
+                    if(resultbean.code.equals("1800")){
                         hideEmptyView();
-                        rateText.setText(resultbean.attendance);
+                        rateText.setText(resultbean.attendanceRatio);
                     }
                     else
                         initEmptyView();
@@ -121,15 +123,26 @@ public class StudentinfoActivity extends RxBaseActivity {
     public void onClick(View v){
         switch (v.getId()){
             case R.id.exitclass:
+                showDialog();
+                break;
+        }
+    }
+    private void showDialog(){
+        AlertDialog.Builder dialog=new AlertDialog.Builder(this,R.style.AlertDialog);
+        dialog.setMessage("确定移除学生："+studentname);
+        dialog.setCancelable(false);
+        dialog.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
                 final JSONObject userobject=new JSONObject();
                 try {
-                    userobject.put("classid",classid);
+                    userobject.put("classId",classid);
                     userobject.put("phoneNumber",phoneNumber);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
                 RequestBody requestBody=RequestBody.create(MediaType.parse("application/json;charset=utf-8"),userobject.toString());
-                RetrofitHelper.getClassInfo().removeclass("remove_class",requestBody)
+                RetrofitHelper.getClassInfo().removeclass("remove_student",requestBody)
                         .compose(bindToLifecycle())
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
@@ -143,15 +156,22 @@ public class StudentinfoActivity extends RxBaseActivity {
                             }
                             @Override
                             public void onNext(StateInfo stateInfo) {
-                                if(stateInfo.code.equals("xxx")) {
-                                    ToastUtil.showShort(StudentinfoActivity.this, "该同学已被成功移出班级");
+                                if(stateInfo.code.equals("1600")) {
+                                    ToastUtil.showShort(StudentinfoActivity.this, "该同学已被成功移除班级");
                                     finish();
                                 }
                                 else
-                                    ToastUtil.showShort(StudentinfoActivity.this,"请求失败");
+                                    ToastUtil.showShort(StudentinfoActivity.this,"移除失败");
                             }
                         });
-                break;
-        }
+            }
+        });
+        dialog.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
     }
 }

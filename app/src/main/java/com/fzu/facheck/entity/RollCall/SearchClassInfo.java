@@ -6,20 +6,22 @@ public class SearchClassInfo {
     public String code;
     private List<ResultClass> resultClasses;
     public static class ResultClass{
-        private String ClassName;
-        private String ClassTime;
+        private String className;
+        private String classTime;
         private boolean state;
-        private String Classid;
+        private String teacherName;
+        private String classId;
         public String getClassName(){
-            return ClassName;
+            return className;
         }
         public String getClassTime(){
-            return ClassTime;
+            return classTime;
         }
         public boolean getState(){
             return state;
         }
-        public String getClassid() { return Classid; }
+        public String getClassid() { return classId; }
+        public String getTeacherName(){return teacherName;}
     }
     public List<ResultClass> getResultClasses(){
         return resultClasses;

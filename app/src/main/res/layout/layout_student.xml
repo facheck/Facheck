@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:background="@color/background_light"
+    android:layout_width="match_parent"
+    android:fitsSystemWindows="true"
     android:layout_height="match_parent">
     <include layout="@layout/layout_toolbar" />
     <LinearLayout
@@ -16,7 +19,7 @@
             android:text="基本信息"/>
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="1dp"
+            android:layout_height="@dimen/line_height"
             android:background="@color/gray"/>
         <LinearLayout
             android:layout_width="match_parent"
@@ -47,67 +50,9 @@
                     android:layout_marginHorizontal="10dp"
                     android:layout_height="wrap_content" />
             </RelativeLayout>
-            <!--<LinearLayout-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="1dp"-->
-                <!--android:layout_marginHorizontal="10dp"-->
-                <!--android:background="@color/gray"/>-->
-            <!--<RelativeLayout-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:background="@color/white"-->
-                <!--android:layout_height="40dp">-->
-                <!--<TextView-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_centerInParent="true"-->
-                    <!--android:layout_marginHorizontal="10dp"-->
-                    <!--android:layout_alignParentLeft="true"-->
-                    <!--android:textSize="20dp"-->
-                    <!--android:textColor="@color/black_80"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:text="性别"/>-->
-                <!--<TextView-->
-                    <!--android:id="@+id/student_sex"-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_centerInParent="true"-->
-                    <!--android:layout_alignParentRight="true"-->
-                    <!--android:gravity="right"-->
-                    <!--android:background="@null"-->
-                    <!--android:textSize="20dp"-->
-                    <!--android:layout_marginHorizontal="10dp"-->
-                    <!--android:layout_height="wrap_content" />-->
-            <!--</RelativeLayout>-->
-            <!--<LinearLayout-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="1dp"-->
-                <!--android:layout_marginHorizontal="10dp"-->
-                <!--android:background="@color/gray"/>-->
-            <!--<RelativeLayout-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:background="@color/white"-->
-                <!--android:layout_height="40dp">-->
-                <!--<TextView-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_centerInParent="true"-->
-                    <!--android:layout_marginHorizontal="10dp"-->
-                    <!--android:layout_alignParentLeft="true"-->
-                    <!--android:textSize="20dp"-->
-                    <!--android:textColor="@color/black_80"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:text="班级"/>-->
-                <!--<TextView-->
-                    <!--android:id="@+id/student_class"-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_centerInParent="true"-->
-                    <!--android:layout_alignParentRight="true"-->
-                    <!--android:gravity="right"-->
-                    <!--android:background="@null"-->
-                    <!--android:textSize="20dp"-->
-                    <!--android:layout_marginHorizontal="10dp"-->
-                    <!--android:layout_height="wrap_content" />-->
-            <!--</RelativeLayout>-->
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
+                android:layout_height="@dimen/line_height"
                 android:layout_marginHorizontal="10dp"
                 android:background="@color/gray"/>
             <RelativeLayout
@@ -137,7 +82,7 @@
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="1dp"
+            android:layout_height="@dimen/line_height"
             android:background="@color/gray"/>
         <RelativeLayout
             android:layout_width="match_parent"
@@ -162,7 +107,7 @@
         </RelativeLayout>
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="1dp"
+            android:layout_height="@dimen/line_height"
             android:background="@color/gray"/>
         <RelativeLayout
             android:layout_width="match_parent"
@@ -190,7 +135,7 @@
         </RelativeLayout>
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="1dp"
+            android:layout_height="@dimen/line_height"
             android:background="@color/gray"/>
     </LinearLayout>
     <com.fzu.facheck.widget.CustomEmptyView
@@ -207,7 +152,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_marginTop="25dp"
-            android:layout_height="1dp"
+            android:layout_height="@dimen/line_height"
             android:background="@color/gray">
         </LinearLayout>
         <TextView
@@ -220,7 +165,7 @@
             android:textSize="18dp"/>
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="1dp"
+            android:layout_height="@dimen/line_height"
             android:background="@color/gray">
         </LinearLayout>
     </LinearLayout>

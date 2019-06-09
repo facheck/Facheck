@@ -3,11 +3,12 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:fitsSystemWindows="true"
+    android:background="@color/background_light"
     android:layout_height="match_parent">
     <LinearLayout
         android:layout_width="match_parent"
         android:orientation="horizontal"
-        android:layout_marginTop="6dp"
+        android:background="@color/white"
         android:layout_height="wrap_content">
         <TextView
             android:id="@+id/cancel_search"
@@ -21,25 +22,36 @@
             android:id="@+id/search_edit"
             android:drawableLeft="@drawable/ic_action_action_search"
             android:layout_width="0dp"
-            android:hint="请输入要搜索的班级ID"
-            android:background="#E0EEE0"
+            android:hint="请输入要搜索的班级名称"
+            android:layout_marginVertical="2dp"
+            android:background="@color/background_light"
             android:textSize="15dp"
             android:inputType="text"
-            android:layout_height="32dp"
+            android:layout_gravity="center"
+            android:layout_height="match_parent"
             android:layout_weight="5"/>
         <TextView
-            android:id="@+id/search"
+            android:id="@+id/search_classes"
             android:layout_width="0dp"
             android:gravity="center"
-            android:layout_height="32dp"
+            android:layout_height="34dp"
             android:textColor="#5e83ff"
             android:layout_weight="1"
             android:text="搜索"/>
     </LinearLayout>
+    <TextView
+        android:id="@+id/result_hint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="搜索结果："
+        android:textSize="15dp"
+        android:layout_marginBottom="3dp"
+        android:textColor="@color/gray_80"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"/>
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycle"
         android:fadeScrollbars="true"
-        android:layout_marginTop="12dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
     <com.fzu.facheck.widget.CustomEmptyView
@@ -52,8 +64,8 @@
         android:id="@+id/hintEmpty"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="20dp"
         android:layout_gravity="center"
-        android:textSize="18sp"
+        android:textSize="17sp"
         android:text="未找到匹配班级!"/>
 </LinearLayout>

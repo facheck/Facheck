@@ -1,9 +1,8 @@
 package com.fzu.facheck.module.home;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
@@ -31,6 +30,8 @@ public class MyPageFragment extends RxLazyFragment {
     TextView phoneText;
     @BindView(R.id.user_photo)
     ImageView photoView;
+    @BindView(R.id.identify)
+    TextView identifyText;
     @Override
     public int getLayoutResId() {
         return R.layout.fragment_my_pager;
@@ -41,9 +42,16 @@ public class MyPageFragment extends RxLazyFragment {
         initToolBar();
         Glide.with(getActivity()).load(R.mipmap.photo).bitmapTransform(new RoundedCornersTransformation(getActivity()
         ,28,1,RoundedCornersTransformation.CornerType.ALL)).into(photoView);
-        SharedPreferences pref=PreferenceManager.getDefaultSharedPreferences(getActivity());
-        nameText.setText(pref.getString("username",""));
-        phoneText.setText("手机号:"+pref.getString("phoneNumber",""));
+        nameText.setText(PreferenceUtil.getString(ConstantUtil.EXTRA_NAME,""));
+        phoneText.setText("手机号:"+PreferenceUtil.getString(ConstantUtil.PHONE_NUMBER,""));
+    }
+    @Override
+    public void onResume(){
+        super.onResume();
+        if(PreferenceUtil.getBoolean(ConstantUtil.AUTHENTICATED,false)){
+            identifyText.setText("已完成身份认证");
+            identifyText.setClickable(false);
+        }
     }
     private void initToolBar() {
         mToolbar.setTitle("");
@@ -58,9 +66,8 @@ public class MyPageFragment extends RxLazyFragment {
         Intent intent=new Intent(getActivity(),CommonActivity.class);
         switch(view.getId()){
             case R.id.identify:
-                data=1;
-                intent.putExtra("flag",data);
-                startActivity(intent);
+                Intent intent1=new Intent(getActivity(),IdentifyActivity.class);
+                startActivity(intent1);
                 break;
             case R.id.theAbout:
                 data=2;

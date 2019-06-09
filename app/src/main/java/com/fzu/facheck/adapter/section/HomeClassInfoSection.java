@@ -79,7 +79,10 @@ public class HomeClassInfoSection extends StatelessSection {
             case STUDENT:
                 final ClassInfo.Student student=students.get(position);
                 if(position==0){
-                    itemViewHolder.bottomlinear.setVisibility(View.GONE);
+                    if(position==students.size()-1)
+                        itemViewHolder.midlinear.setVisibility(View.GONE);
+                    else
+                        itemViewHolder.bottomlinear.setVisibility(View.GONE);
                 }
                 else if(position==students.size()-1){
                     itemViewHolder.toplinear.setVisibility(View.GONE);
@@ -106,8 +109,10 @@ public class HomeClassInfoSection extends StatelessSection {
                 final ClassInfo.Record record=records.get(position);
                 itemViewHolder.iconView.setVisibility(View.GONE);
                 itemViewHolder.midlinear.setVisibility(View.GONE);
-                if(position==0)
-                    itemViewHolder.bottomlinear.setVisibility(View.GONE);
+                if(position==0) {
+                    if(position!=records.size()-1)
+                        itemViewHolder.bottomlinear.setVisibility(View.GONE);
+                }
                 else
                     itemViewHolder.toplinear.setVisibility(View.GONE);
                 itemViewHolder.LeftnameText.setText(record.getTime());
@@ -139,14 +144,18 @@ public class HomeClassInfoSection extends StatelessSection {
             FooterViewHolder footerViewHolder=(FooterViewHolder) holder;
             switch (this.type){
                 case STUDENT:
-                    if(students!=null&&students.size()>0)
+                    if(students!=null&&students.size()>0) {
                         footerViewHolder.hintText.setVisibility(View.GONE);
+                        footerViewHolder.linearLayout.setVisibility(View.GONE);
+                    }
                     else
-                        footerViewHolder.hintText.setText("请让学生通过班级号加入班级");
+                        footerViewHolder.hintText.setText("请让学生通过邀请码加入班级");
                     break;
                 case RECORDS:
-                    if(records!=null&&records.size()>0)
+                    if(records!=null&&records.size()>0) {
                         footerViewHolder.hintText.setVisibility(View.GONE);
+                        footerViewHolder.linearLayout.setVisibility(View.GONE);
+                    }
                     else
                         footerViewHolder.hintText.setText("暂无！");
                     break;
@@ -185,6 +194,8 @@ public class HomeClassInfoSection extends StatelessSection {
     static class FooterViewHolder extends RecyclerView.ViewHolder{
         @BindView(R.id.hint)
         TextView hintText;
+        @BindView(R.id.foot_view)
+        LinearLayout linearLayout;
         FooterViewHolder(View itemview){
             super(itemview);
             ButterKnife.bind(this, itemView);
