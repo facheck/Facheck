@@ -9,6 +9,7 @@ public class ClassInfo {
     public String endTime;
     public String classCode;
     public String teacherName;
+    public String classAttendanceRate;
     private List<Student> studentList;
     private List<Record> recordList;
     public static class Student{

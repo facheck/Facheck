@@ -113,7 +113,8 @@ dependencies {
     implementation 'pub.devrel:easypermissions:2.0.0'
     implementation 'com.github.chrisbanes:PhotoView:2.1.3'
     implementation 'com.afollestad.material-dialogs:core:0.9.6.0'
-
+    implementation 'com.github.thinkcool:circletextimageview:1.0.20151218'
+    implementation 'com.beardedhen:androidbootstrap:2.3.2'
 
 
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5'

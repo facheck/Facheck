@@ -5,15 +5,16 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
+import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.fzu.facheck.R;
 import com.fzu.facheck.adapter.section.HomeClassInfoSection;
 import com.fzu.facheck.base.RxBaseActivity;
@@ -23,13 +24,14 @@ import com.fzu.facheck.network.RetrofitHelper;
 import com.fzu.facheck.utils.ToastUtil;
 import com.fzu.facheck.widget.CustomEmptyView;
 import com.fzu.facheck.widget.sectioned.SectionedRecyclerViewAdapter;
+import com.thinkcool.circletextimageview.CircleTextImageView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
-import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import rx.Subscriber;
@@ -55,13 +57,15 @@ public class ClassPageActivity extends RxBaseActivity {
     TextView codeText;
     @BindView(R.id.the_class_time)
     TextView timeText;
-    @BindView(R.id.class_icon)
-    ImageView classView;
     @BindView(R.id.the_teacher)
     TextView teacherName;
     @BindView(R.id.delete_the_class)
     LinearLayout delete_Linear;
-    private ClassInfo result=new ClassInfo();
+    @BindView(R.id.sign_in_rate)
+    TextView signInRate;
+    @BindView(R.id.circle_image)
+    CircleTextImageView circleImage;
+    private ClassInfo result = new ClassInfo();
     private boolean mIsRefreshing = false;
     private SectionedRecyclerViewAdapter mSectionedAdapter;
     @Override
@@ -71,13 +75,11 @@ public class ClassPageActivity extends RxBaseActivity {
 
     @Override
     public void initViews(Bundle savedInstanceState) {
-        Intent intent=getIntent();
-        classid=intent.getStringExtra("classid");
-        classname=intent.getStringExtra("classname");
-        master=intent.getBooleanExtra("master",false);
-        Glide.with(this).load(R.mipmap.class_icon).bitmapTransform(new RoundedCornersTransformation(this
-                ,28,1,RoundedCornersTransformation.CornerType.ALL)).into(classView);
-        if(!master)
+        Intent intent = getIntent();
+        classid = intent.getStringExtra("classid");
+        classname = intent.getStringExtra("classname");
+        master = intent.getBooleanExtra("master", false);
+        if (!master)
             delete_Linear.setVisibility(View.GONE);
         initToolBar();
         initRefreshLayout();
@@ -86,18 +88,33 @@ public class ClassPageActivity extends RxBaseActivity {
 
     @Override
     public void initToolBar() {
-        mtoolbar.setNavigationIcon(R.drawable.backicon);
         title_text.setText(classname);
-         mtoolbar.setNavigationOnClickListener(v->finish());
+        mtoolbar.setTitle("");
+        setSupportActionBar(mtoolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+
     @Override
     public void initNavigationView() {
     }
 
     @Override
     public void initRecyclerView() {
-        mSectionedAdapter=new SectionedRecyclerViewAdapter();
-        GridLayoutManager gridLayoutManager=new GridLayoutManager(this,1);
+        mSectionedAdapter = new SectionedRecyclerViewAdapter();
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 1);
         mRecyclerView.setLayoutManager(gridLayoutManager);
         mRecyclerView.setAdapter(mSectionedAdapter);
         setRecycleNoScroll();
@@ -115,22 +132,24 @@ public class ClassPageActivity extends RxBaseActivity {
             loadData();
         });
     }
+
     @Override
     public void loadData() {
-        JSONObject userobject=new JSONObject();
+        JSONObject userobject = new JSONObject();
         try {
-            userobject.put("classId",classid);
+            userobject.put("classId", classid);
         } catch (JSONException e) {
             e.printStackTrace();
         }
         RequestBody requestBody = RequestBody.create(MediaType.parse("application/json;charset=utf-8"), userobject.toString());
-        RetrofitHelper.getClassInfo().getclassInfo("get_class_info",requestBody)
+        RetrofitHelper.getClassInfo().getclassInfo("get_class_info", requestBody)
                 .compose(bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<ClassInfo>() {
                     @Override
-                    public void onCompleted() { }
+                    public void onCompleted() {
+                    }
 
                     @Override
                     public void onError(Throwable e) {
@@ -138,13 +157,15 @@ public class ClassPageActivity extends RxBaseActivity {
                     }
                     @Override
                     public void onNext(ClassInfo classInfo) {
-                        if(classInfo.code.equals("1500")){
-                            result=classInfo;
-                            teacherName.setText("任课教师:"+classInfo.teacherName);
-                            codeText.setText("邀请码:"+classInfo.classCode);
-                            timeText.setText("课程时间："+classInfo.startTime+"——"+classInfo.endTime);
+                        if (classInfo.code.equals("1500")) {
+                            result = classInfo;
+                            teacherName.setText("任课教师:   " + classInfo.teacherName);
+                            codeText.setText("邀请码:   " + classInfo.classCode);
+                            timeText.setText("课程时间：  " + classInfo.startTime + "——" + classInfo.endTime);
+                            signInRate.setText("出勤率：  " + Float.parseFloat(classInfo.classAttendanceRate) * 100 + "%");
+                            circleImage.setText(String.valueOf(classname.charAt(0)));
                             finishTask();
-                        }else{
+                        } else {
                             initEmptyView();
                         }
                     }
@@ -153,10 +174,10 @@ public class ClassPageActivity extends RxBaseActivity {
     @Override
     public void finishTask() {
         mSwipeRefreshLayout.setRefreshing(false);
-        mIsRefreshing=false;
+        mIsRefreshing = false;
         hideEmptyView();
-        mSectionedAdapter.addSection(new HomeClassInfoSection(result,"student",this));
-        mSectionedAdapter.addSection(new HomeClassInfoSection(result,"records",this));
+        mSectionedAdapter.addSection(new HomeClassInfoSection(result, "student", this));
+        mSectionedAdapter.addSection(new HomeClassInfoSection(result, "records", this));
         mSectionedAdapter.notifyDataSetChanged();
     }
     public void initEmptyView() {
@@ -171,10 +192,10 @@ public class ClassPageActivity extends RxBaseActivity {
         mRecyclerView.setVisibility(View.VISIBLE);
     }
     private void clearData() {
-        if(result!=null){
-            if(result.getStudents()!=null)
+        if (result != null) {
+            if (result.getStudents() != null)
                 result.getStudents().clear();
-            if(result.getRecords()!=null)
+            if (result.getRecords() != null)
                 result.getRecords().clear();
         }
         mIsRefreshing = true;
@@ -184,28 +205,29 @@ public class ClassPageActivity extends RxBaseActivity {
         mRecyclerView.setOnTouchListener((v, event) -> mIsRefreshing);
     }
     @OnClick({R.id.delete_the_class})
-    public void onClick(View v){
-        switch (v.getId()){
+    public void onClick(View v) {
+        switch (v.getId()) {
             case R.id.delete_the_class:
                 showDialog();
                 break;
         }
     }
-    private void showDialog(){
-        AlertDialog.Builder dialog=new AlertDialog.Builder(this,R.style.AlertDialog);
-        dialog.setMessage("确定删除班级："+classname);
+
+    private void showDialog() {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this, R.style.AlertDialog);
+        dialog.setMessage("确定删除班级：" + classname);
         dialog.setCancelable(false);
         dialog.setPositiveButton("确定", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                final JSONObject userobject=new JSONObject();
+                final JSONObject userobject = new JSONObject();
                 try {
-                    userobject.put("classId",classid);
+                    userobject.put("classId", classid);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                RequestBody requestBody=RequestBody.create(MediaType.parse("application/json;charset=utf-8"),userobject.toString());
-                RetrofitHelper.getClassInfo().removeclass("remove_class",requestBody)
+                RequestBody requestBody = RequestBody.create(MediaType.parse("application/json;charset=utf-8"), userobject.toString());
+                RetrofitHelper.getClassInfo().removeclass("remove_class", requestBody)
                         .compose(bindToLifecycle())
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
@@ -213,18 +235,19 @@ public class ClassPageActivity extends RxBaseActivity {
                             @Override
                             public void onCompleted() {
                             }
+
                             @Override
                             public void onError(Throwable e) {
-                                ToastUtil.showShort(ClassPageActivity.this,"请求失败");
+                                ToastUtil.showShort(ClassPageActivity.this, "请求失败");
                             }
+
                             @Override
                             public void onNext(StateInfo stateInfo) {
-                                if(stateInfo.code.equals("1700")) {
+                                if (stateInfo.code.equals("1700")) {
                                     ToastUtil.showShort(ClassPageActivity.this, "删除成功");
                                     finish();
-                                }
-                                else
-                                    ToastUtil.showShort(ClassPageActivity.this,"删除失败");
+                                } else
+                                    ToastUtil.showShort(ClassPageActivity.this, "删除失败");
                             }
                         });
             }
@@ -236,5 +259,12 @@ public class ClassPageActivity extends RxBaseActivity {
             }
         });
         dialog.show();
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // TODO: add setContentView(...) invocation
+        ButterKnife.bind(this);
     }
 }
