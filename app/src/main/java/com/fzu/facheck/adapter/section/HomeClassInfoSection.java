@@ -15,6 +15,7 @@ import com.fzu.facheck.entity.RollCall.ClassInfo;
 import com.fzu.facheck.module.home.ClassPageActivity;
 import com.fzu.facheck.module.home.RollCallResultActivity;
 import com.fzu.facheck.module.home.StudentinfoActivity;
+import com.fzu.facheck.widget.sectioned.SectionedRecyclerViewAdapter;
 import com.fzu.facheck.widget.sectioned.StatelessSection;
 
 import java.util.List;
@@ -31,30 +32,38 @@ public class HomeClassInfoSection extends StatelessSection {
     private List<ClassInfo.Record> records;
     private String type;
     private Context mContext;
+    private SectionedRecyclerViewAdapter sectionAdapter;
+    boolean expanded = false;
 
 
-    public HomeClassInfoSection(ClassInfo classInfo,String type,Context context){
-        super(R.layout.layout_home_class_header,R.layout.linear_layout,R.layout.layout_per_info);
+    public HomeClassInfoSection(ClassInfo classInfo,String type,Context context,SectionedRecyclerViewAdapter sectionAdapter){
+        super(R.layout.layout_class_header,R.layout.linear_layout,R.layout.layout_per_info);
         students=classInfo.getStudents();
         records=classInfo.getRecords();
         this.type=type;
         this.mContext=context;
+        this.sectionAdapter = sectionAdapter;
     }
     @Override
     public int getContentItemsTotal() {
-        switch (type){
-            case STUDENT:
-                if(students!=null)
-                    return students.size();
-                else
-                    return 0;
-            case RECORDS:
-                if(records!=null)
-                    return records.size();
-                else
-                    return 0;
-            default:
-                return 1;
+
+        if (!expanded) {
+            return 0;
+        } else {
+            switch (type) {
+                case STUDENT:
+                    if (students != null)
+                        return students.size();
+                    else
+                        return 0;
+                case RECORDS:
+                    if (records != null)
+                        return records.size();
+                    else
+                        return 0;
+                default:
+                    return 1;
+            }
         }
     }
 
@@ -132,12 +141,26 @@ public class HomeClassInfoSection extends StatelessSection {
         HeaderViewHolder headerViewHolder=(HeaderViewHolder)holder;
         switch (this.type){
             case STUDENT:
-                headerViewHolder.tileText.setText("总人数："+students.size()+"人");
+                headerViewHolder.titleClass.setText("总人数："+students.size()+"人");
                 break;
             case RECORDS:
-                headerViewHolder.tileText.setText("点名记录");
+                headerViewHolder.titleClass.setText("点名记录");
                 break;
         }
+
+        headerViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                expanded = !expanded;
+                headerViewHolder.iconControl.setImageResource(
+                        expanded ? R.drawable.arrow_up : R.drawable.arrow_down
+                );
+
+                sectionAdapter.notifyDataSetChanged();
+
+            }
+        });
     }
     @Override
     public void onBindFooterViewHolder(RecyclerView.ViewHolder holder) {
@@ -165,7 +188,9 @@ public class HomeClassInfoSection extends StatelessSection {
 
     static class HeaderViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.title_class)
-        TextView tileText;
+        TextView titleClass;
+        @BindView(R.id.icon_control)
+        ImageView iconControl;
         HeaderViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);

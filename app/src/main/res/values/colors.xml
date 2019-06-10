@@ -5,7 +5,7 @@
     <color name="background_light">#f7eceeef</color>
     <color name="subColorPrimary">#d3efeb</color>
     <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#D81B60</color>
+    <color name="colorAccent">#6ACCBD</color>
     <color name="white">#FFFFFF</color>
     <color name="gray">#B8B8B8</color>
     <color name="gray_20">#B3B3B3</color>
@@ -28,6 +28,7 @@
     <color name="toolbar">#62adc2</color>
     <color name="reminder">#ffe69b</color>
     <color name="reminder_backgroud">#c6f0ea</color>
+    <color name="delete_backgroud">#f26961</color>
 
     <drawable name="transparent">#00000000</drawable>
     <color name="primary_alpha_30">#90000000</color>

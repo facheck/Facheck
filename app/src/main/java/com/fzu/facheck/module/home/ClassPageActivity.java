@@ -176,8 +176,8 @@ public class ClassPageActivity extends RxBaseActivity {
         mSwipeRefreshLayout.setRefreshing(false);
         mIsRefreshing = false;
         hideEmptyView();
-        mSectionedAdapter.addSection(new HomeClassInfoSection(result, "student", this));
-        mSectionedAdapter.addSection(new HomeClassInfoSection(result, "records", this));
+        mSectionedAdapter.addSection(new HomeClassInfoSection(result, "student", this,mSectionedAdapter));
+        mSectionedAdapter.addSection(new HomeClassInfoSection(result, "records", this,mSectionedAdapter));
         mSectionedAdapter.notifyDataSetChanged();
     }
     public void initEmptyView() {
