@@ -16,11 +16,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class SelectClassTimeSection extends StatelessSection {
-//    public List<String> timeList;
     private Context mContext;
-    public SelectClassTimeSection(List<String> time_list,Context context){
+    public SelectClassTimeSection(Context context){
         super(R.layout.layout_per_time);
-//        this.timeList=time_list;
         this.mContext=context;
     }
     @Override
@@ -36,7 +34,7 @@ public class SelectClassTimeSection extends StatelessSection {
     @Override
     public void onBindItemViewHolder(RecyclerView.ViewHolder holder, int position) {
         ItemViewHolder itemViewHolder=(ItemViewHolder)holder;
-        final String time=((SelectClassTimeActivity)mContext).times.get(position);
+        final String time=((SelectClassTimeActivity)mContext).gettime(position);
         itemViewHolder.timeText.setText(time);
         itemViewHolder.deleteButton.setOnClickListener(v->{((SelectClassTimeActivity)mContext).delete_time(position);});
     }
