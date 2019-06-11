@@ -122,6 +122,6 @@ public class SearchClassSection extends StatelessSection {
                         },throwable ->{ ToastUtil.showShort(mContext,"加入失败");dialog.dismiss();});
             }
         });
-        builder.create().show();
+        builder.create(1).show();
     }
 }

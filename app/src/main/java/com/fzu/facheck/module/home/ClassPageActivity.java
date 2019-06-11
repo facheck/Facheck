@@ -24,6 +24,7 @@ import com.fzu.facheck.entity.RollCall.StateInfo;
 import com.fzu.facheck.network.RetrofitHelper;
 import com.fzu.facheck.utils.ToastUtil;
 import com.fzu.facheck.widget.CustomEmptyView;
+import com.fzu.facheck.widget.MyDialog;
 import com.fzu.facheck.widget.sectioned.SectionedRecyclerViewAdapter;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.LineChart;
@@ -244,10 +245,16 @@ public class ClassPageActivity extends RxBaseActivity {
     }
 
     private void showDialog() {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this, R.style.AlertDialog);
-        dialog.setMessage("确定删除班级：" + classname);
-        dialog.setCancelable(false);
-        dialog.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+        MyDialog.Builder builder=new MyDialog.Builder(this);
+        builder.setTitle("提示");
+        builder.setMsg("确定删除班级："+classname);
+        builder.setLeft(new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.setRight(new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 final JSONObject userobject = new JSONObject();
@@ -275,6 +282,7 @@ public class ClassPageActivity extends RxBaseActivity {
                             public void onNext(StateInfo stateInfo) {
                                 if (stateInfo.code.equals("1700")) {
                                     ToastUtil.showShort(ClassPageActivity.this, "删除成功");
+                                    dialog.dismiss();
                                     finish();
                                 } else
                                     ToastUtil.showShort(ClassPageActivity.this, "删除失败");
@@ -282,13 +290,7 @@ public class ClassPageActivity extends RxBaseActivity {
                         });
             }
         });
-        dialog.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-        dialog.show();
+        builder.create(2).show();
     }
 
     @Override

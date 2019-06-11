@@ -15,6 +15,7 @@ import com.fzu.facheck.entity.RollCall.StateInfo;
 import com.fzu.facheck.network.RetrofitHelper;
 import com.fzu.facheck.utils.ToastUtil;
 import com.fzu.facheck.widget.CustomEmptyView;
+import com.fzu.facheck.widget.MyDialog;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -52,6 +53,8 @@ public class StudentinfoActivity extends RxBaseActivity {
     TextView rateText;
     @BindView(R.id.exitclass)
     LinearLayout exitclass;
+    @BindView(R.id.student_id)
+    TextView idText;
     @Override
     public int getLayoutId() {
         return R.layout.layout_student;
@@ -96,6 +99,7 @@ public class StudentinfoActivity extends RxBaseActivity {
                     if(resultbean.code.equals("1800")){
                         hideEmptyView();
                         rateText.setText(resultbean.attendanceRatio);
+                        idText.setText(resultbean.studentId);
                     }
                     else
                         initEmptyView();
@@ -128,10 +132,16 @@ public class StudentinfoActivity extends RxBaseActivity {
         }
     }
     private void showDialog(){
-        AlertDialog.Builder dialog=new AlertDialog.Builder(this,R.style.AlertDialog);
-        dialog.setMessage("确定移除学生："+studentname);
-        dialog.setCancelable(false);
-        dialog.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+        MyDialog.Builder builder=new MyDialog.Builder(this);
+        builder.setTitle("提示");
+        builder.setMsg("确定移除学生："+studentname);
+        builder.setLeft(new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.setRight(new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 final JSONObject userobject=new JSONObject();
@@ -158,6 +168,7 @@ public class StudentinfoActivity extends RxBaseActivity {
                             public void onNext(StateInfo stateInfo) {
                                 if(stateInfo.code.equals("1600")) {
                                     ToastUtil.showShort(StudentinfoActivity.this, "该同学已被成功移除班级");
+                                    dialog.dismiss();
                                     finish();
                                 }
                                 else
@@ -166,12 +177,6 @@ public class StudentinfoActivity extends RxBaseActivity {
                         });
             }
         });
-        dialog.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-        dialog.show();
+        builder.create(2).show();
     }
 }
