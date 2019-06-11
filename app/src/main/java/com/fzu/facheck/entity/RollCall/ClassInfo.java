@@ -29,23 +29,23 @@ public class ClassInfo {
     public static class Record{
         private String recordid;
         private String time;
-        private String attendratio;
-        private String attendnceRate;
+        private String attendanceRatio;
+        private String attendanceRate;
 
-        public Record(String time,String attend,String recordid,String attendnceRate){
+        public Record(String recordid,String time,String attendanceRatio,String attendanceRate){
             this.time=time;
-            this.attendratio=attend;
+            this.attendanceRatio=attendanceRatio;
             this.recordid=recordid;
-            this.attendnceRate = attendnceRate;
+            this.attendanceRate = attendanceRate;
         }
         public String getTime(){
             return time;
         }
-        public String getAttendratio(){
-            return attendratio;
+        public String getAttendanceRatio(){
+            return attendanceRatio;
         }
         public String getRecordid(){return recordid;}
-        public String getAttendnceRate(){return attendnceRate;}
+        public String getAttendanceRate(){return attendanceRate;}
 
     }
     public List<Student> getStudents(){

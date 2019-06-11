@@ -1,10 +1,7 @@
 package com.fzu.facheck.module.home;
 
-import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.DashPathEffect;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
@@ -25,6 +22,7 @@ import com.fzu.facheck.entity.RollCall.StateInfo;
 import com.fzu.facheck.network.RetrofitHelper;
 import com.fzu.facheck.utils.ToastUtil;
 import com.fzu.facheck.widget.CustomEmptyView;
+import com.fzu.facheck.widget.DynamicLineChartManager;
 import com.fzu.facheck.widget.MyDialog;
 import com.fzu.facheck.widget.sectioned.SectionedRecyclerViewAdapter;
 import com.github.mikephil.charting.animation.Easing;
@@ -85,17 +83,11 @@ public class ClassPageActivity extends RxBaseActivity {
     TextView signInRate;
     @BindView(R.id.circle_image)
     CircleTextImageView circleImage;
-    @BindView(R.id.title_class)
-    TextView mTitleClass;
-    @BindView(R.id.line_chart)
-    LineChart mLineChart;
+
     private ClassInfo result = new ClassInfo();
     private boolean mIsRefreshing = false;
     private SectionedRecyclerViewAdapter mSectionedAdapter;
 
-    private LineDataSet set1;
-    private YAxis leftAxis;
-    private XAxis xAxis;
 
     String TAG = "PageActivity";
 
@@ -116,7 +108,6 @@ public class ClassPageActivity extends RxBaseActivity {
         initToolBar();
         initRefreshLayout();
         initRecyclerView();
-        initLineChart();
     }
 
     @Override
@@ -212,8 +203,10 @@ public class ClassPageActivity extends RxBaseActivity {
         mSwipeRefreshLayout.setRefreshing(false);
         mIsRefreshing = false;
         hideEmptyView();
+        mSectionedAdapter.addSection(new HomeClassInfoSection(result, "chart", this, mSectionedAdapter));
         mSectionedAdapter.addSection(new HomeClassInfoSection(result, "student", this, mSectionedAdapter));
         mSectionedAdapter.addSection(new HomeClassInfoSection(result, "records", this, mSectionedAdapter));
+
         mSectionedAdapter.notifyDataSetChanged();
     }
 
@@ -297,99 +290,9 @@ public class ClassPageActivity extends RxBaseActivity {
         builder.create(2).show();
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        // TODO: add setContentView(...) invocation
-        ButterKnife.bind(this);
-    }
-
-    public void initLineChart() {
-
-        leftAxis = mLineChart.getAxisLeft();
-        xAxis = mLineChart.getXAxis();
-
-        //后台绘制
-        mLineChart.setDrawGridBackground(false);
-        //设置描述文本
-        mLineChart.getDescription().setEnabled(false);
-        //设置支持触控手势
-        mLineChart.setTouchEnabled(true);
-        //设置缩放
-        mLineChart.setDragEnabled(true);
-        //设置推动
-        mLineChart.setScaleEnabled(true);
-
-
-        leftAxis.setAxisMinimum(0f);
-//        Log.i(TAG, "initLineChart: "+result.getRecords().get(1).getAttendnceRate());
-
-        ArrayList<Entry> values = new ArrayList<Entry>();
-        for(int i =0;i<6;i++){
-            values.add(new Entry(i+1, 0.1f));
-//            Float.valueOf(result.getRecords().get(i).getAttendratio()));
-        }
-
-
-        //设置数据
-        setData(values);
-        //默认动画
-        mLineChart.animateX(2500);
-
-        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        xAxis.setGranularity(1f);
-        xAxis.setLabelCount(5);
-        //刷新
-        mLineChart.invalidate();
-        // 得到这个文字
-        Legend l = mLineChart.getLegend();
-        // 修改文字
-        l.setEnabled(false);
 
 
 
-    }
 
-    private void setData(ArrayList<Entry> values) {
-        if (mLineChart.getData() != null && mLineChart.getData().getDataSetCount() > 0) {
-            set1 = (LineDataSet) mLineChart.getData().getDataSetByIndex(0);
-            set1.setValues(values);
-            mLineChart.getData().notifyDataChanged();
-            mLineChart.notifyDataSetChanged();
-        } else {
-            // 创建一个数据集
-            set1 = new LineDataSet(values, "");
 
-            // 设置线
-            set1.enableDashedLine(10f, 5f, 0f);
-            set1.enableDashedHighlightLine(10f, 5f, 0f);
-            set1.setColor(getResources().getColor(R.color.colorPrimary));
-            set1.setCircleColor(getResources().getColor(R.color.colorPrimary));
-            set1.setLineWidth(1.5f);
-            set1.setCircleRadius(3f);
-            set1.setDrawCircleHole(false);
-            set1.setValueTextSize(9f);
-            set1.setDrawFilled(true);
-            set1.setFormLineWidth(1f);
-            set1.setFormLineDashEffect(new DashPathEffect(new float[]{10f, 5f}, 0f));
-            set1.setFormSize(15.f);
-            set1.setMode(LineDataSet.Mode.CUBIC_BEZIER);
-
-            if (Utils.getSDKInt() >= 18) {
-                // 填充背景只支持18以上
-
-                set1.setFillColor(getResources().getColor(R.color.subColorPrimary));
-            } else {
-                set1.setFillColor(Color.BLACK);
-            }
-            ArrayList<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
-            //添加数据集
-            dataSets.add(set1);
-
-            //创建一个数据集的数据对象
-            LineData data = new LineData(dataSets);
-
-            mLineChart.setData(data);
-        }
-    }
 }
