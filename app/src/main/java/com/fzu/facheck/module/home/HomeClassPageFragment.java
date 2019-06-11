@@ -181,12 +181,6 @@ public class HomeClassPageFragment extends RxLazyFragment {
 
     private void clearData() {
 
-        if (results != null|| !"".equals(results)) {
-            if(results.getClassInfo().getManagedClassData()!=null)
-                results.getClassInfo().getManagedClassData().clear();
-            if(results.getClassInfo().getJoinedClassData()!=null)
-                results.getClassInfo().getJoinedClassData().clear();
-        }
 
         mIsRefreshing = true;
         mSectionedAdapter.removeAllSections();

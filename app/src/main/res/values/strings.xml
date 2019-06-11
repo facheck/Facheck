@@ -29,4 +29,7 @@
     <string name="upload_photo_tips_details">1、请将摄像头对准脸部。\n2、不要遮挡脸部。\n3、请在光线充足的条件下拍照。</string>
 
 
+    <string name="roll_call_result_bar_chart">班级出勤率概览</string>
+
+
 </resources>

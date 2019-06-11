@@ -3,6 +3,8 @@ package com.fzu.facheck.module.home;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.DashPathEffect;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
@@ -14,7 +16,6 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.fzu.facheck.R;
 import com.fzu.facheck.adapter.section.HomeClassInfoSection;
 import com.fzu.facheck.base.RxBaseActivity;
@@ -24,10 +25,27 @@ import com.fzu.facheck.network.RetrofitHelper;
 import com.fzu.facheck.utils.ToastUtil;
 import com.fzu.facheck.widget.CustomEmptyView;
 import com.fzu.facheck.widget.sectioned.SectionedRecyclerViewAdapter;
+import com.github.mikephil.charting.animation.Easing;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.Description;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+import com.github.mikephil.charting.utils.Utils;
 import com.thinkcool.circletextimageview.CircleTextImageView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -65,9 +83,18 @@ public class ClassPageActivity extends RxBaseActivity {
     TextView signInRate;
     @BindView(R.id.circle_image)
     CircleTextImageView circleImage;
+    @BindView(R.id.title_class)
+    TextView mTitleClass;
+    @BindView(R.id.line_chart)
+    LineChart mLineChart;
     private ClassInfo result = new ClassInfo();
     private boolean mIsRefreshing = false;
     private SectionedRecyclerViewAdapter mSectionedAdapter;
+
+    private LineDataSet set1;
+    private YAxis leftAxis;
+    private XAxis xAxis;
+
     @Override
     public int getLayoutId() {
         return R.layout.fragment_class_pager;
@@ -84,6 +111,7 @@ public class ClassPageActivity extends RxBaseActivity {
         initToolBar();
         initRefreshLayout();
         initRecyclerView();
+        initLineChart();
     }
 
     @Override
@@ -119,6 +147,7 @@ public class ClassPageActivity extends RxBaseActivity {
         mRecyclerView.setAdapter(mSectionedAdapter);
         setRecycleNoScroll();
     }
+
     @Override
     public void initRefreshLayout() {
         mSwipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
@@ -155,6 +184,7 @@ public class ClassPageActivity extends RxBaseActivity {
                     public void onError(Throwable e) {
                         initEmptyView();
                     }
+
                     @Override
                     public void onNext(ClassInfo classInfo) {
                         if (classInfo.code.equals("1500")) {
@@ -171,15 +201,17 @@ public class ClassPageActivity extends RxBaseActivity {
                     }
                 });
     }
+
     @Override
     public void finishTask() {
         mSwipeRefreshLayout.setRefreshing(false);
         mIsRefreshing = false;
         hideEmptyView();
-        mSectionedAdapter.addSection(new HomeClassInfoSection(result, "student", this,mSectionedAdapter));
-        mSectionedAdapter.addSection(new HomeClassInfoSection(result, "records", this,mSectionedAdapter));
+        mSectionedAdapter.addSection(new HomeClassInfoSection(result, "student", this, mSectionedAdapter));
+        mSectionedAdapter.addSection(new HomeClassInfoSection(result, "records", this, mSectionedAdapter));
         mSectionedAdapter.notifyDataSetChanged();
     }
+
     public void initEmptyView() {
         mSwipeRefreshLayout.setRefreshing(false);
         mCustomEmptyView.setVisibility(View.VISIBLE);
@@ -187,23 +219,21 @@ public class ClassPageActivity extends RxBaseActivity {
         mCustomEmptyView.setEmptyImage(R.drawable.img_tips_error);
         mCustomEmptyView.setEmptyText("加载失败!请重试或检查网络连接");
     }
+
     public void hideEmptyView() {
         mCustomEmptyView.setVisibility(View.GONE);
         mRecyclerView.setVisibility(View.VISIBLE);
     }
+
     private void clearData() {
-        if (result != null) {
-            if (result.getStudents() != null)
-                result.getStudents().clear();
-            if (result.getRecords() != null)
-                result.getRecords().clear();
-        }
         mIsRefreshing = true;
         mSectionedAdapter.removeAllSections();
     }
+
     private void setRecycleNoScroll() {
         mRecyclerView.setOnTouchListener((v, event) -> mIsRefreshing);
     }
+
     @OnClick({R.id.delete_the_class})
     public void onClick(View v) {
         switch (v.getId()) {
@@ -266,5 +296,90 @@ public class ClassPageActivity extends RxBaseActivity {
         super.onCreate(savedInstanceState);
         // TODO: add setContentView(...) invocation
         ButterKnife.bind(this);
+    }
+
+    public void initLineChart() {
+
+        leftAxis = mLineChart.getAxisLeft();
+        xAxis = mLineChart.getXAxis();
+
+        //后台绘制
+        mLineChart.setDrawGridBackground(false);
+        //设置描述文本
+        mLineChart.getDescription().setEnabled(false);
+        //设置支持触控手势
+        mLineChart.setTouchEnabled(true);
+        //设置缩放
+        mLineChart.setDragEnabled(true);
+        //设置推动
+        mLineChart.setScaleEnabled(true);
+
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setGranularity(1f);
+        xAxis.setLabelCount(5);
+        leftAxis.setAxisMinimum(0f);
+
+        ArrayList<Entry> values = new ArrayList<Entry>();
+        for(int i =1;i<=result.getRecords().size();i++){
+            values.add(new Entry(i, Float.valueOf(result.getRecords().get(i).getAttendratio())));
+        }
+
+
+        //设置数据
+        setData(values);
+        //默认动画
+        mLineChart.animateX(2500);
+        //刷新
+        mLineChart.invalidate();
+        // 得到这个文字
+        Legend l = mLineChart.getLegend();
+        // 修改文字
+        l.setEnabled(false);
+
+
+
+    }
+
+    private void setData(ArrayList<Entry> values) {
+        if (mLineChart.getData() != null && mLineChart.getData().getDataSetCount() > 0) {
+            set1 = (LineDataSet) mLineChart.getData().getDataSetByIndex(0);
+            set1.setValues(values);
+            mLineChart.getData().notifyDataChanged();
+            mLineChart.notifyDataSetChanged();
+        } else {
+            // 创建一个数据集
+            set1 = new LineDataSet(values, "");
+
+            // 设置线
+            set1.enableDashedLine(10f, 5f, 0f);
+            set1.enableDashedHighlightLine(10f, 5f, 0f);
+            set1.setColor(getResources().getColor(R.color.colorPrimary));
+            set1.setCircleColor(getResources().getColor(R.color.colorPrimary));
+            set1.setLineWidth(1.5f);
+            set1.setCircleRadius(3f);
+            set1.setDrawCircleHole(false);
+            set1.setValueTextSize(9f);
+            set1.setDrawFilled(true);
+            set1.setFormLineWidth(1f);
+            set1.setFormLineDashEffect(new DashPathEffect(new float[]{10f, 5f}, 0f));
+            set1.setFormSize(15.f);
+            set1.setMode(LineDataSet.Mode.CUBIC_BEZIER);
+
+            if (Utils.getSDKInt() >= 18) {
+                // 填充背景只支持18以上
+
+                set1.setFillColor(getResources().getColor(R.color.subColorPrimary));
+            } else {
+                set1.setFillColor(Color.BLACK);
+            }
+            ArrayList<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
+            //添加数据集
+            dataSets.add(set1);
+
+            //创建一个数据集的数据对象
+            LineData data = new LineData(dataSets);
+
+            mLineChart.setData(data);
+        }
     }
 }
