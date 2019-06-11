@@ -30,10 +30,13 @@ public class ClassInfo {
         private String recordid;
         private String time;
         private String attendratio;
-        public Record(String time,String attend,String recordid){
+        private String attendnceRate;
+
+        public Record(String time,String attend,String recordid,String attendnceRate){
             this.time=time;
             this.attendratio=attend;
             this.recordid=recordid;
+            this.attendnceRate = attendnceRate;
         }
         public String getTime(){
             return time;
@@ -42,6 +45,7 @@ public class ClassInfo {
             return attendratio;
         }
         public String getRecordid(){return recordid;}
+        public String getAttendnceRate(){return attendnceRate;}
 
     }
     public List<Student> getStudents(){

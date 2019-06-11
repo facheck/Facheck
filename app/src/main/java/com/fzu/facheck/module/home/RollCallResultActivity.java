@@ -186,21 +186,17 @@ public class RollCallResultActivity extends RxBaseActivity {
         mPieChart.setCenterTextColor(R.color.font_gray);
         mPieChart.setHoleRadius(45f);
 
-
         Description description = new Description();
         description.setText("");
         mPieChart.setDescription(description);
         mPieChart.setHighlightPerTapEnabled(true);
         mPieChart.animateY(1400, Easing.EasingOption.EaseInOutQuad);
 
-
         mPieChart.setExtraOffsets(0f,10f,0f,0f);
 
         List<PieEntry> strings = new ArrayList<>();
         strings.add(new PieEntry(Float.parseFloat(mRollCallResult.getRecordInfo().getAttendanceRate()), "已签到"));
         strings.add(new PieEntry(1-Float.parseFloat(mRollCallResult.getRecordInfo().getAttendanceRate()), "未签到"));
-
-
 
         PieDataSet dataSet = new PieDataSet(strings, "");
 

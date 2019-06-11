@@ -11,6 +11,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -95,6 +96,9 @@ public class ClassPageActivity extends RxBaseActivity {
     private LineDataSet set1;
     private YAxis leftAxis;
     private XAxis xAxis;
+
+    String TAG = "PageActivity";
+
 
     @Override
     public int getLayoutId() {
@@ -316,14 +320,14 @@ public class ClassPageActivity extends RxBaseActivity {
         //设置推动
         mLineChart.setScaleEnabled(true);
 
-        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        xAxis.setGranularity(1f);
-        xAxis.setLabelCount(5);
+
         leftAxis.setAxisMinimum(0f);
+//        Log.i(TAG, "initLineChart: "+result.getRecords().get(1).getAttendnceRate());
 
         ArrayList<Entry> values = new ArrayList<Entry>();
-        for(int i =1;i<=result.getRecords().size();i++){
-            values.add(new Entry(i, Float.valueOf(result.getRecords().get(i).getAttendratio())));
+        for(int i =0;i<6;i++){
+            values.add(new Entry(i+1, 0.1f));
+//            Float.valueOf(result.getRecords().get(i).getAttendratio()));
         }
 
 
@@ -331,6 +335,10 @@ public class ClassPageActivity extends RxBaseActivity {
         setData(values);
         //默认动画
         mLineChart.animateX(2500);
+
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setGranularity(1f);
+        xAxis.setLabelCount(5);
         //刷新
         mLineChart.invalidate();
         // 得到这个文字
