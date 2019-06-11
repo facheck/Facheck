@@ -34,10 +34,11 @@ public class HomeClassInfoSection extends StatelessSection {
     private Context mContext;
     private SectionedRecyclerViewAdapter sectionAdapter;
     boolean expanded = false;
+    boolean empty=false;
 
 
     public HomeClassInfoSection(ClassInfo classInfo,String type,Context context,SectionedRecyclerViewAdapter sectionAdapter){
-        super(R.layout.layout_class_header,R.layout.linear_layout,R.layout.layout_per_info);
+        super(R.layout.layout_class_header,R.layout.layout_per_info);
         students=classInfo.getStudents();
         records=classInfo.getRecords();
         this.type=type;
@@ -52,15 +53,19 @@ public class HomeClassInfoSection extends StatelessSection {
         } else {
             switch (type) {
                 case STUDENT:
-                    if (students != null)
+                    if (students != null&&students.size()!=0)
                         return students.size();
-                    else
-                        return 0;
+                    else {
+                        empty=true;
+                        return 1;
+                    }
                 case RECORDS:
-                    if (records != null)
+                    if (records != null&&records.size()!=0)
                         return records.size();
-                    else
-                        return 0;
+                    else {
+                        empty=true;
+                        return 1;
+                    }
                 default:
                     return 1;
             }
@@ -76,62 +81,67 @@ public class HomeClassInfoSection extends StatelessSection {
     public RecyclerView.ViewHolder getHeaderViewHolder(View view) {
         return new HeaderViewHolder(view);
     }
-    @Override
-    public RecyclerView.ViewHolder getFooterViewHolder(View view) {
-        return new FooterViewHolder(view);
-    }
 
     @Override
     public void onBindItemViewHolder(RecyclerView.ViewHolder holder, int position) {
         ItemViewHolder itemViewHolder=(ItemViewHolder)holder;
         switch (this.type){
             case STUDENT:
-                final ClassInfo.Student student=students.get(position);
-                if(position==0){
-                    if(position==students.size()-1)
-                        itemViewHolder.midlinear.setVisibility(View.GONE);
-                    else
-                        itemViewHolder.bottomlinear.setVisibility(View.GONE);
-                }
-                else if(position==students.size()-1){
-                    itemViewHolder.toplinear.setVisibility(View.GONE);
+                if(empty){
                     itemViewHolder.midlinear.setVisibility(View.GONE);
+                    itemViewHolder.iconView.setVisibility(View.GONE);
+                    itemViewHolder.LeftnameText.setText("请让学生通过邀请码加入班级");
+                }else {
+                    final ClassInfo.Student student = students.get(position);
+                    if (position == 0) {
+                        if (position == students.size() - 1)
+                            itemViewHolder.midlinear.setVisibility(View.GONE);
+                        else
+                            itemViewHolder.bottomlinear.setVisibility(View.GONE);
+                    } else if (position == students.size() - 1) {
+                        itemViewHolder.toplinear.setVisibility(View.GONE);
+                        itemViewHolder.midlinear.setVisibility(View.GONE);
+                    } else {
+                        itemViewHolder.bottomlinear.setVisibility(View.GONE);
+                        itemViewHolder.toplinear.setVisibility(View.GONE);
+                    }
+                    Glide.with(mContext).load(R.mipmap.photo).bitmapTransform(new RoundedCornersTransformation(mContext
+                            , 28, 1, RoundedCornersTransformation.CornerType.ALL)).into(itemViewHolder.iconView);
+                    itemViewHolder.LeftnameText.setText(student.getName());
+                    itemViewHolder.relativeLayout.setOnClickListener(v -> {
+                        Intent intent = new Intent(mContext, StudentinfoActivity.class);
+                        intent.putExtra("master", ((ClassPageActivity) mContext).master);
+                        intent.putExtra("studentname", student.getName());
+                        intent.putExtra("phoneNumber", student.getPhoneNumber());
+                        intent.putExtra("classname", ((ClassPageActivity) mContext).classname);
+                        intent.putExtra("classid", ((ClassPageActivity) mContext).classid);
+                        mContext.startActivity(intent);
+                    });
                 }
-                else{
-                    itemViewHolder.bottomlinear.setVisibility(View.GONE);
-                    itemViewHolder.toplinear.setVisibility(View.GONE);
-                }
-                Glide.with(mContext).load(R.mipmap.photo).bitmapTransform(new RoundedCornersTransformation(mContext
-                        ,28,1,RoundedCornersTransformation.CornerType.ALL)).into(itemViewHolder.iconView);
-                itemViewHolder.LeftnameText.setText(student.getName());
-                itemViewHolder.relativeLayout.setOnClickListener(v->{
-                    Intent intent=new Intent(mContext,StudentinfoActivity.class);
-                    intent.putExtra("master",((ClassPageActivity)mContext).master);
-                    intent.putExtra("studentname",student.getName());
-                    intent.putExtra("phoneNumber",student.getPhoneNumber());
-                    intent.putExtra("classname",((ClassPageActivity)mContext).classname);
-                    intent.putExtra("classid",((ClassPageActivity)mContext).classid);
-                    mContext.startActivity(intent);
-                });
                 break;
             case RECORDS:
-                final ClassInfo.Record record=records.get(position);
-                itemViewHolder.iconView.setVisibility(View.GONE);
-                itemViewHolder.midlinear.setVisibility(View.GONE);
-                if(position==0) {
-                    if(position!=records.size()-1)
-                        itemViewHolder.bottomlinear.setVisibility(View.GONE);
+                if(empty){
+                    itemViewHolder.midlinear.setVisibility(View.GONE);
+                    itemViewHolder.iconView.setVisibility(View.GONE);
+                    itemViewHolder.LeftnameText.setText("暂无！");
+                }else {
+                    final ClassInfo.Record record = records.get(position);
+                    itemViewHolder.iconView.setVisibility(View.GONE);
+                    itemViewHolder.midlinear.setVisibility(View.GONE);
+                    if (position == 0) {
+                        if (position != records.size() - 1)
+                            itemViewHolder.bottomlinear.setVisibility(View.GONE);
+                    } else
+                        itemViewHolder.toplinear.setVisibility(View.GONE);
+                    itemViewHolder.LeftnameText.setText(record.getTime());
+                    itemViewHolder.RightnameText.setText(record.getAttendratio());
+                    itemViewHolder.relativeLayout.setOnClickListener(v -> {
+                        Intent intent = new Intent(mContext, RollCallResultActivity.class);
+                        intent.putExtra("record_id", record.getRecordid());
+                        intent.putExtra("class_title", ((ClassPageActivity) mContext).classname);
+                        mContext.startActivity(intent);
+                    });
                 }
-                else
-                    itemViewHolder.toplinear.setVisibility(View.GONE);
-                itemViewHolder.LeftnameText.setText(record.getTime());
-                itemViewHolder.RightnameText.setText(record.getAttendratio());
-                itemViewHolder.relativeLayout.setOnClickListener(v->{
-                    Intent intent=new Intent(mContext,RollCallResultActivity.class);
-                    intent.putExtra("record_id",record.getRecordid());
-                    intent.putExtra("class_title",((ClassPageActivity)mContext).classname);
-                    mContext.startActivity(intent);
-                });
                 break;
         }
     }
@@ -162,29 +172,6 @@ public class HomeClassInfoSection extends StatelessSection {
             }
         });
     }
-    @Override
-    public void onBindFooterViewHolder(RecyclerView.ViewHolder holder) {
-            FooterViewHolder footerViewHolder=(FooterViewHolder) holder;
-            switch (this.type){
-                case STUDENT:
-                    if(students!=null&&students.size()>0) {
-                        footerViewHolder.hintText.setVisibility(View.GONE);
-                        footerViewHolder.linearLayout.setVisibility(View.GONE);
-                    }
-                    else
-                        footerViewHolder.hintText.setText("请让学生通过邀请码加入班级");
-                    break;
-                case RECORDS:
-                    if(records!=null&&records.size()>0) {
-                        footerViewHolder.hintText.setVisibility(View.GONE);
-                        footerViewHolder.linearLayout.setVisibility(View.GONE);
-                    }
-                    else
-                        footerViewHolder.hintText.setText("暂无！");
-                    break;
-            }
-        }
-
 
     static class HeaderViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.title_class)
@@ -213,16 +200,6 @@ public class HomeClassInfoSection extends StatelessSection {
         LinearLayout toplinear;
         ItemViewHolder(View itemView){
             super(itemView);
-            ButterKnife.bind(this, itemView);
-        }
-    }
-    static class FooterViewHolder extends RecyclerView.ViewHolder{
-        @BindView(R.id.hint)
-        TextView hintText;
-        @BindView(R.id.foot_view)
-        LinearLayout linearLayout;
-        FooterViewHolder(View itemview){
-            super(itemview);
             ButterKnife.bind(this, itemView);
         }
     }

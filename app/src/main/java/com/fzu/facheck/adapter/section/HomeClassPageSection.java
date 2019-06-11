@@ -14,6 +14,7 @@ import com.fzu.facheck.R;
 import com.fzu.facheck.entity.RollCall.RollCallInfo;
 import com.fzu.facheck.module.home.ClassPageActivity;
 import com.fzu.facheck.widget.sectioned.StatelessSection;
+import com.thinkcool.circletextimageview.CircleTextImageView;
 
 import java.util.List;
 
@@ -30,7 +31,7 @@ public class HomeClassPageSection extends StatelessSection {
     private Context mContext;
 
     public HomeClassPageSection(RollCallInfo.ClassInfoBean data, String type, Context context){
-        super(R.layout.layout_home_class_header, R.layout.linear_layout,R.layout.layout_per_info);
+        super(R.layout.layout_home_class_header, R.layout.linear_layout,R.layout.layout_per_class_info);
         this.jointedData = data.getJoinedClassData();
         this.createdData = data.getManagedClassData();
         this.type = type;
@@ -88,8 +89,7 @@ public class HomeClassPageSection extends StatelessSection {
                     itemViewHolder.toplinear.setVisibility(View.GONE);
                 }
                 itemViewHolder.leftText.setText(joinedClassDataBean.getJoinedClassName());
-                Glide.with(mContext).load(R.mipmap.class_icon).bitmapTransform(new RoundedCornersTransformation(mContext
-                        ,28,1,RoundedCornersTransformation.CornerType.ALL)).into(itemViewHolder.iconView);
+                itemViewHolder.iconView.setText(String.valueOf(joinedClassDataBean.getJoinedClassName().charAt(0)));
                 itemViewHolder.relativeLayout.setOnClickListener(v->{
                     Intent intent=new Intent(mContext,ClassPageActivity.class);
                     intent.putExtra("master",false);
@@ -114,8 +114,7 @@ public class HomeClassPageSection extends StatelessSection {
                     itemViewHolder.bottomlinear.setVisibility(View.GONE);
                     itemViewHolder.toplinear.setVisibility(View.GONE);
                 }
-                Glide.with(mContext).load(R.mipmap.class_icon).bitmapTransform(new RoundedCornersTransformation(mContext
-                        ,28,1,RoundedCornersTransformation.CornerType.ALL)).into(itemViewHolder.iconView);
+                itemViewHolder.iconView.setText(String.valueOf(managedClassData.getManagedClassName().charAt(0)));
                 itemViewHolder.leftText.setText(managedClassData.getManagedClassName());
                 itemViewHolder.relativeLayout.setOnClickListener(v->{
                     Intent intent=new Intent(mContext,ClassPageActivity.class);
@@ -167,7 +166,7 @@ public class HomeClassPageSection extends StatelessSection {
         @BindView(R.id.item_view)
         RelativeLayout relativeLayout;
         @BindView(R.id.item_icon)
-        ImageView iconView;
+        CircleTextImageView iconView;
         @BindView(R.id.midline)
         LinearLayout midlinear;
         @BindView(R.id.bottomline)
