@@ -103,9 +103,8 @@ public class HomeClassSection extends StatelessSection {
                     itemViewHolder.mBtn.setOnClickListener(v -> {
 
                         Intent intent = new Intent(mContext, SignInActivity.class);
-                        mRecordId = PreferenceUtil.getString(jointedData.get(position).getJoinedClassId(),"wrong");
 
-                        intent.putExtra("record_id",mRecordId);
+                        intent.putExtra("class_id",joinedClassDataBean.getJoinedClassId());
                         intent.putExtra("class_title",itemViewHolder.mClassName.getText());
 
                         mContext.startActivity(intent);

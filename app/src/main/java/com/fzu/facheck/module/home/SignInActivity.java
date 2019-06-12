@@ -1,7 +1,6 @@
 package com.fzu.facheck.module.home;
 
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
@@ -15,7 +14,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.afollestad.materialdialogs.Theme;
 import com.amap.api.location.AMapLocation;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
@@ -27,13 +25,15 @@ import com.fzu.facheck.entity.RollCall.RollCallResult;
 import com.fzu.facheck.module.common.CameraActivity;
 import com.fzu.facheck.network.RetrofitHelper;
 import com.fzu.facheck.utils.ConstantUtil;
-import com.fzu.facheck.utils.GlideUtil;
 import com.fzu.facheck.utils.PhotoUtil;
+import com.fzu.facheck.utils.PreferenceUtil;
 import com.fzu.facheck.widget.CircleProgressView;
 import com.fzu.facheck.widget.CustomImageDialog;
 import com.fzu.facheck.widget.sectioned.SectionedRecyclerViewAdapter;
 
-import org.json.*;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 
 import butterknife.BindView;
@@ -56,20 +56,21 @@ public class SignInActivity extends RxBaseActivity {
     AppBarLayout appBarLayout;
     @BindView(R.id.title_class)
     TextView titleClass;
-    @BindView(R.id.selfile)
-    ImageView selfile;
+
     @BindView(R.id.tips_icon)
     ImageView tipsIcon;
     @BindView(R.id.bt_del)
     Button btDel;
     @BindView(R.id.commit_selfile)
     Button commitSelfile;
+    @BindView(R.id.selfile)
+    ImageView selfile;
 
 
     private String mTitle;
     private SectionedRecyclerViewAdapter mSectionedAdapter;
     private boolean mIsRefreshing = false;
-    private String mRecordId;
+    private String mClassId;
     private RollCallResult mRollCallResult;
     private Bitmap bitmap = null;
     private static final int TAKE_POTHO = 1;
@@ -87,32 +88,26 @@ public class SignInActivity extends RxBaseActivity {
 
     @Override
     public void initViews(Bundle savedInstanceState) {
-        Intent intent = getIntent();
+        Intent newIntent = getIntent();
 
-        if (intent != null) {
-            mTitle = intent.getStringExtra(ConstantUtil.EXTRA_CLASS_TITLE) + "-签到";
-            mRecordId = intent.getStringExtra(ConstantUtil.EXTRA_RECORD_ID);
+        if (newIntent != null) {
+            mTitle = newIntent.getStringExtra(ConstantUtil.EXTRA_CLASS_TITLE) + "-签到";
+            mClassId = newIntent.getStringExtra(ConstantUtil.EXTRA_CLASS_ID);
         }
 
         initToolBar();
         initBaseDialog();
         initDialog();
 
-        selfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (selfile.getDrawable() == null) {
-                    Intent intent = new Intent(SignInActivity.this, CameraActivity.class);
-                    startActivityForResult(intent, TAKE_POTHO);
-                } else {
-                    CustomImageDialog customImageDialog = null;
-                    customImageDialog = new CustomImageDialog(SignInActivity.this, outImage);
-                    customImageDialog.show();
-                }
-
-
-            }
-        });
+        selfile.setOnClickListener(v -> {
+            if (selfile.getDrawable() == null) {
+            Intent intent = new Intent(SignInActivity.this, CameraActivity.class);
+            startActivityForResult(intent, TAKE_POTHO);
+        } else {
+            CustomImageDialog customImageDialog = null;
+            customImageDialog = new CustomImageDialog(SignInActivity.this, outImage);
+            customImageDialog.show();
+        }});
 
         btDel.setVisibility(View.INVISIBLE);
 
@@ -175,9 +170,9 @@ public class SignInActivity extends RxBaseActivity {
         commitSelfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(selfile.getDrawable() == null){
+                if (selfile.getDrawable() == null) {
                     reminderDialog.show();
-                }else{
+                } else {
                     waitForDialog.show();
                     uploadData();
 
@@ -193,7 +188,6 @@ public class SignInActivity extends RxBaseActivity {
     public void initNavigationView() {
 
     }
-
 
 
     @Override
@@ -221,19 +215,19 @@ public class SignInActivity extends RxBaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void initDialog(){
+    public void initDialog() {
 
         waitForDialog = new MaterialDialog.Builder(this)
                 .content("正在上传和识别...")
                 .widgetColor(getResources().getColor(R.color.colorPrimary))
-                .progress(true,-1)//等待图标 true=圆形icon false=进度条
+                .progress(true, -1)//等待图标 true=圆形icon false=进度条
                 .canceledOnTouchOutside(false)//点击外部不取消对话框
                 .build();
 
     }
 
 
-    public void initBaseDialog(){
+    public void initBaseDialog() {
 
         reminderDialog = new MaterialDialog.Builder(this)
                 .content("请先上传自拍照！")
@@ -242,26 +236,27 @@ public class SignInActivity extends RxBaseActivity {
                 .build();
 
     }
-    private RequestBody initRequestbody(){
+
+    private RequestBody initRequestbody() {
 
         jsonObject = new JSONObject();
         String photo = PhotoUtil.base64(PhotoUtil.amendRotatePhoto(PhotoUtil.getPath()));
         try {
-            jsonObject.put("comparedPhoto",photo);
+            jsonObject.put("comparedPhoto", photo);
             mLocation = HomeClassSection.getmLocation();
-            if(mLocation!=null){
+            if (mLocation != null) {
 
-                jsonObject .put("longitude",mLocation.getLongitude());
-                jsonObject .put("latitude",mLocation.getLatitude());
-            }else{
+                jsonObject.put("longitude", mLocation.getLongitude());
+                jsonObject.put("latitude", mLocation.getLatitude());
+            } else {
                 //当前网络状况不好 无法定位 请移到网络状况良好的地区
-                jsonObject .put("longitude",119.30);
-                jsonObject .put("latitude",26.08);
+                jsonObject.put("longitude", -999.00);
+                jsonObject.put("latitude", -999.00);
             }
+            String phone_number = PreferenceUtil.getString(ConstantUtil.PHONE_NUMBER, "wrong");
 
-            jsonObject.put("phoneNumber","13215000002");
-            jsonObject.put("classId","13215000");
-
+            jsonObject.put("phoneNumber", phone_number);
+            jsonObject.put("classId", mClassId);
 
 
         } catch (JSONException e) {
@@ -269,11 +264,11 @@ public class SignInActivity extends RxBaseActivity {
         }
 
 
-        RequestBody requestBody = RequestBody.create(MediaType.parse("application/json;charset=utf-8"),  jsonObject.toString());
+        RequestBody requestBody = RequestBody.create(MediaType.parse("application/json;charset=utf-8"), jsonObject.toString());
         return requestBody;
     }
 
-    private void uploadData(){
+    private void uploadData() {
         RetrofitHelper.postSignInAPI()
                 .postSignInInfo(initRequestbody())
                 .subscribeOn(Schedulers.io())
@@ -283,7 +278,7 @@ public class SignInActivity extends RxBaseActivity {
 
                     waitForDialog.dismiss();
 
-                    switch (resultBeans.getCode()){
+                    switch (resultBeans.getCode()) {
                         case "0300":
                             reminderDialog.setContent("签到成功！");
                             break;
@@ -302,15 +297,16 @@ public class SignInActivity extends RxBaseActivity {
                     reminderDialog.show();
 
 
-
-
                 });
 
 
     }
 
 
-
-
-
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // TODO: add setContentView(...) invocation
+        ButterKnife.bind(this);
+    }
 }

@@ -24,6 +24,7 @@ public class ConstantUtil {
     public static final String SATURDAY_TYPE = "周六";
     public static final String EXTRA_SPID = "spid";
     public static final String EXTRA_CLASS_TITLE = "class_title";
+    public static final String EXTRA_CLASS_ID = "class_id";
     public static final String EXTRA_RECORD_ID = "record_id";
     public static final String EXTRA_SEASON_ID = "season_id";
     public static final String EXTRA_KEY = "extra_type";

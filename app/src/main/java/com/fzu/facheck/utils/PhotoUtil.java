@@ -75,7 +75,7 @@ public class PhotoUtil {
     public static Bitmap amendRotatePhoto(String originpath){
         int angel=readPictureDegree(originpath);
         BitmapFactory.Options options=new BitmapFactory.Options();
-        options.inSampleSize=3;
+        options.inSampleSize=8;
         Bitmap bitmap=BitmapFactory.decodeFile(originpath,options);
         options=null;
         return bitmap;
