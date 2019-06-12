@@ -13,14 +13,18 @@ import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.fzu.facheck.R;
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
+import com.github.mikephil.charting.formatter.IValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.utils.Utils;
+import com.github.mikephil.charting.utils.ViewPortHandler;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -67,6 +71,13 @@ public class DynamicLineChartManager {
         //折线图例 标签 设置
         Legend legend = lineChart.getLegend();
         legend.setEnabled(false);
+        xAxis.setValueFormatter(new IAxisValueFormatter() {
+            @Override
+            public String getFormattedValue(float value, AxisBase axis) {
+                return "第"+(int)value+"次";
+            }
+        });
+
 
 
         //X轴设置显示位置在底部
@@ -76,8 +87,9 @@ public class DynamicLineChartManager {
 
         //保证Y轴从0开始，不然会上移一点
         leftAxis.setAxisMinimum(0f);
-        rightAxis.setAxisMinimum(0f);
-
+        xAxis.setDrawGridLines(false);
+        rightAxis.setDrawGridLines(false);
+        leftAxis.setDrawGridLines(true);
 
 
     }
@@ -95,10 +107,14 @@ public class DynamicLineChartManager {
         leftAxis.setAxisMaximum(max);
         leftAxis.setAxisMinimum(min);
         leftAxis.setLabelCount(labelCount, false);
+        leftAxis.setValueFormatter(new IAxisValueFormatter() {
+            @Override
+            public String getFormattedValue(float value, AxisBase axis) {
+                return ((int) (value * 100)) + "%";
+            }
+        });
 
-        rightAxis.setAxisMaximum(max);
-        rightAxis.setAxisMinimum(min);
-        rightAxis.setLabelCount(labelCount, false);
+        rightAxis.setEnabled(false);
         lineChart.invalidate();
     }
 
@@ -143,6 +159,12 @@ public class DynamicLineChartManager {
 
             //创建一个数据集的数据对象
             LineData data = new LineData(dataSets);
+            data.setValueFormatter(new IValueFormatter() {
+                @Override
+                public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
+                    return (value * 100) + "%";
+                }
+            });
 
             lineChart.setData(data);
             //设置在曲线图中显示的最大数量

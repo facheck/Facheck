@@ -122,6 +122,7 @@ public class HomeClassInfoSection extends StatelessSection {
                 if (empty) {
                     itemViewHolder.midlinear.setVisibility(View.GONE);
                     itemViewHolder.iconView.setVisibility(View.GONE);
+                    itemViewHolder.lineChart.setVisibility(View.GONE);
                     itemViewHolder.LeftnameText.setText("请让学生通过邀请码加入班级");
                 } else {
                     final ClassInfo.Student student = students.get(position);
@@ -158,6 +159,7 @@ public class HomeClassInfoSection extends StatelessSection {
                 if (empty) {
                     itemViewHolder.midlinear.setVisibility(View.GONE);
                     itemViewHolder.iconView.setVisibility(View.GONE);
+                    itemViewHolder.lineChart.setVisibility(View.GONE);
                     itemViewHolder.LeftnameText.setText("暂无！");
                 } else {
                     final ClassInfo.Record record = records.get(position);
@@ -182,7 +184,13 @@ public class HomeClassInfoSection extends StatelessSection {
                 }
                 break;
             case CHART:
-                if(!empty){
+                if (empty) {
+                    itemViewHolder.midlinear.setVisibility(View.GONE);
+                    itemViewHolder.iconView.setVisibility(View.GONE);
+                    itemViewHolder.lineChart.setVisibility(View.GONE);
+                    itemViewHolder.LeftnameText.setText("暂无！");
+                }
+                else{
                     initLineChart(itemViewHolder.lineChart);
                 }
 
@@ -262,7 +270,7 @@ public class HomeClassInfoSection extends StatelessSection {
 
         dynamicLineChartManager = new DynamicLineChartManager(lineChart, mContext.getResources().getColor(R.color.colorPrimary), mContext.getResources().getColor(R.color.subColorPrimary));
 
-        dynamicLineChartManager.setYAxis(1.2f, 0, 5);
+        dynamicLineChartManager.setYAxis(1.1f, 0, 6);
 
 //
         ArrayList<Entry> values = new ArrayList<Entry>();
