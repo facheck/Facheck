@@ -49,7 +49,7 @@ public class HomeClassPageFragment extends RxLazyFragment {
     RecyclerView mRecyclerView;
     @BindView(R.id.empty_layout)
     CustomEmptyView mCustomEmptyView;
-
+    private boolean isFirstCreated=true;
     private boolean mIsRefreshing = false;
     private SectionedRecyclerViewAdapter mSectionedAdapter;
     private RollCallInfo results = new RollCallInfo();
@@ -73,8 +73,16 @@ public class HomeClassPageFragment extends RxLazyFragment {
         ((MainActivity)getActivity()).setSupportActionBar(mToolbar);
     }
 
-
-
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(!isFirstCreated){
+            clearData();
+            loadData();
+        }
+        else
+            isFirstCreated=false;
+    }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {

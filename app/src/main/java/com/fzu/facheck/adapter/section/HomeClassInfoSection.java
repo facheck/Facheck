@@ -120,30 +120,18 @@ public class HomeClassInfoSection extends StatelessSection {
         switch (this.type) {
             case STUDENT:
                 if (empty) {
-                    itemViewHolder.midlinear.setVisibility(View.GONE);
-                    itemViewHolder.iconView.setVisibility(View.GONE);
+                    itemViewHolder.righticon.setVisibility(View.GONE);
                     itemViewHolder.lineChart.setVisibility(View.GONE);
                     itemViewHolder.LeftnameText.setText("请让学生通过邀请码加入班级");
                 } else {
                     final ClassInfo.Student student = students.get(position);
-                    if (position == 0) {
-                        if (position == students.size() - 1)
-                            itemViewHolder.midlinear.setVisibility(View.GONE);
-                        else
-                            itemViewHolder.bottomlinear.setVisibility(View.GONE);
-                    } else if (position == students.size() - 1) {
+                    if (position != 0)
                         itemViewHolder.toplinear.setVisibility(View.GONE);
-                        itemViewHolder.midlinear.setVisibility(View.GONE);
-                    } else {
-                        itemViewHolder.bottomlinear.setVisibility(View.GONE);
-                        itemViewHolder.toplinear.setVisibility(View.GONE);
-                    }
 
                     itemViewHolder.lineChart.setVisibility(View.GONE);
-
-                    Glide.with(mContext).load(R.mipmap.photo).bitmapTransform(new RoundedCornersTransformation(mContext
-                            , 28, 1, RoundedCornersTransformation.CornerType.ALL)).into(itemViewHolder.iconView);
-                    itemViewHolder.LeftnameText.setText(student.getName());
+                    itemViewHolder.RightnameText.setVisibility(View.GONE);
+                    itemViewHolder.LeftnameText.setText(student.getStudentId());
+                    itemViewHolder.StudentnameText.setText(student.getName());
                     itemViewHolder.relativeLayout.setOnClickListener(v -> {
                         Intent intent = new Intent(mContext, StudentinfoActivity.class);
                         intent.putExtra("master", ((ClassPageActivity) mContext).master);
@@ -157,19 +145,16 @@ public class HomeClassInfoSection extends StatelessSection {
                 break;
             case RECORDS:
                 if (empty) {
-                    itemViewHolder.midlinear.setVisibility(View.GONE);
-                    itemViewHolder.iconView.setVisibility(View.GONE);
+                    itemViewHolder.righticon.setVisibility(View.GONE);
                     itemViewHolder.lineChart.setVisibility(View.GONE);
                     itemViewHolder.LeftnameText.setText("暂无！");
                 } else {
                     final ClassInfo.Record record = records.get(position);
-                    itemViewHolder.iconView.setVisibility(View.GONE);
-                    itemViewHolder.midlinear.setVisibility(View.GONE);
-                    if (position == 0) {
-                        if (position != records.size() - 1)
-                            itemViewHolder.bottomlinear.setVisibility(View.GONE);
-                    } else
+                    itemViewHolder.righticon.setVisibility(View.GONE);
+                    itemViewHolder.StudentnameText.setVisibility(View.GONE);
+                    if (position != 0) {
                         itemViewHolder.toplinear.setVisibility(View.GONE);
+                    }
 
                     itemViewHolder.lineChart.setVisibility(View.GONE);
                     itemViewHolder.LeftnameText.setText(record.getTime());
@@ -185,8 +170,7 @@ public class HomeClassInfoSection extends StatelessSection {
                 break;
             case CHART:
                 if (empty) {
-                    itemViewHolder.midlinear.setVisibility(View.GONE);
-                    itemViewHolder.iconView.setVisibility(View.GONE);
+                    itemViewHolder.righticon.setVisibility(View.GONE);
                     itemViewHolder.lineChart.setVisibility(View.GONE);
                     itemViewHolder.LeftnameText.setText("暂无！");
                 }
@@ -249,10 +233,11 @@ public class HomeClassInfoSection extends StatelessSection {
         TextView RightnameText;
         @BindView(R.id.item_view)
         RelativeLayout relativeLayout;
-        @BindView(R.id.item_icon)
-        ImageView iconView;
-        @BindView(R.id.midline)
-        LinearLayout midlinear;
+        @BindView(R.id.student_name)
+        TextView StudentnameText;
+        @BindView(R.id.right_icon)
+        ImageView righticon;
+
         @BindView(R.id.bottomline)
         LinearLayout bottomlinear;
         @BindView(R.id.topline)

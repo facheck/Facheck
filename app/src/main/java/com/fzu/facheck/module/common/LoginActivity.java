@@ -4,8 +4,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -72,9 +74,21 @@ public class LoginActivity extends RxBaseActivity {
 
     @Override
     public void initToolBar() {
-        mtoolbar.setNavigationIcon(R.drawable.backicon);
+        mtoolbar.setTitle("");
         title_text.setText("登陆账号");
-        mtoolbar.setNavigationOnClickListener(v->finish());
+        setSupportActionBar(mtoolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
