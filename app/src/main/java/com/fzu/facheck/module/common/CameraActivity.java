@@ -35,6 +35,7 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TabHost;
 import android.widget.TextView;
 
 import com.fzu.facheck.FacheckAPP;
@@ -307,11 +308,13 @@ public class CameraActivity extends RxBaseActivity {
                         maxPreviewHeight, largest);
                 int orientation = getResources().getConfiguration().orientation;
                 if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                    mTextureView.setAspectRatio(
-                            mPreviewSize.getWidth(), mPreviewSize.getHeight());
+//                    mTextureView.setAspectRatio(
+//                            mPreviewSize.getWidth(), mPreviewSize.getHeight());
+//                    mTextureView.setAspectRatio(displaySize.x,displaySize.y);
                 } else {
-                    mTextureView.setAspectRatio(
-                            mPreviewSize.getHeight(), mPreviewSize.getWidth());
+//                    mTextureView.setAspectRatio(
+//                            mPreviewSize.getHeight(), mPreviewSize.getWidth());
+//                    mTextureView.setAspectRatio(displaySize.x,displaySize.y);
                 }
                 Boolean available = characteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE);
                 mFlashSupported = available == null ? false : available;
@@ -536,7 +539,7 @@ public class CameraActivity extends RxBaseActivity {
         } else if (Surface.ROTATION_180 == rotation) {
             matrix.postRotate(180, centerX, centerY);
         }
-        mTextureView.setTransform(matrix);
+//        mTextureView.setTransform(matrix);
     }
 
     private void createCameraPreviewSession() {

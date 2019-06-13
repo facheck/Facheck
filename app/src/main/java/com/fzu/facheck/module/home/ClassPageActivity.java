@@ -85,6 +85,7 @@ public class ClassPageActivity extends RxBaseActivity {
     CircleTextImageView circleImage;
 
     private ClassInfo result = new ClassInfo();
+    private boolean isFirstCreated=true;
     private boolean mIsRefreshing = false;
     private SectionedRecyclerViewAdapter mSectionedAdapter;
 
@@ -103,8 +104,8 @@ public class ClassPageActivity extends RxBaseActivity {
         classid = intent.getStringExtra("classid");
         classname = intent.getStringExtra("classname");
         master = intent.getBooleanExtra("master", false);
-        if (!master)
-            delete_Linear.setVisibility(View.GONE);
+        if (master)
+            delete_Linear.setVisibility(View.VISIBLE);
         initToolBar();
         initRefreshLayout();
         initRecyclerView();
@@ -130,6 +131,17 @@ public class ClassPageActivity extends RxBaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(!isFirstCreated){
+            clearData();
+            loadData();
+        }
+        else
+            isFirstCreated=false;
+    }
 
     @Override
     public void initNavigationView() {

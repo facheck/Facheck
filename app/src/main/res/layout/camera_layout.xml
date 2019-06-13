@@ -4,72 +4,66 @@
     android:fitsSystemWindows="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_weight="0.6"
+        android:background="@color/black_80"
+        android:layout_height="0dp"></LinearLayout>
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:background="@color/colorPrimary"
+        android:background="@color/black_80"
         android:layout_weight="8">
         <com.fzu.facheck.widget.sectioned.AutoFitTextureView
             android:id="@+id/preview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="2dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_centerInParent="true" />
     </RelativeLayout>
-    <!--<TextView-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="0dp"-->
-        <!--android:textColor="@color/white"-->
-        <!--android:text="请您将正脸对准摄像头"-->
-        <!--android:gravity="center"-->
-        <!--android:background="@color/colorPrimary"-->
-        <!--android:layout_weight="0.5"/>-->
-    <!--<TextView-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="0dp"-->
-        <!--android:textColor="@color/white"-->
-        <!--android:text="保证完整的脸部处于可视区域"-->
-        <!--android:gravity="center"-->
-        <!--android:background="@color/colorPrimary"-->
-        <!--android:layout_weight="0.5"/>-->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:background="@color/colorPrimary"
-        android:layout_weight="1.2">
+        android:background="@color/black_80"
+        android:layout_weight="1.4">
         <ImageView
             android:id="@+id/take_p"
-            android:layout_width="80dp"
-            android:layout_marginBottom="2dp"
+            android:layout_width="75dp"
+            android:layout_marginBottom="3dp"
+            android:layout_alignParentBottom="true"
             android:layout_centerInParent="true"
             android:src="@drawable/take"
-            android:layout_height="80dp" />
+            android:layout_height="75dp" />
         <ImageView
             android:id="@+id/cancel_s"
-            android:layout_width="80dp"
+            android:layout_width="75dp"
             android:layout_centerInParent="true"
-            android:layout_marginRight="25dp"
+            android:layout_marginRight="45dp"
+            android:layout_alignParentBottom="true"
             android:src="@drawable/cancel"
             android:layout_marginBottom="2dp"
             android:layout_alignParentRight="true"
-            android:layout_height="80dp" />
+            android:layout_height="75dp" />
         <ImageView
             android:id="@+id/commit_p"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
             android:src="@drawable/ok"
+            android:layout_alignParentBottom="true"
             android:layout_marginBottom="2dp"
             android:layout_centerInParent="true"
             android:layout_alignParentLeft="true"
-            android:layout_marginLeft="25dp"/>
+            android:layout_marginLeft="45dp"/>
         <TextView
             android:id="@+id/cancel_t"
             android:layout_width="wrap_content"
             android:text="取消"
             android:textSize="20dp"
-            android:layout_marginBottom="2dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="28dp"
             android:layout_centerInParent="true"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="30dp"
+            android:layout_marginRight="43dp"
             android:textColor="@color/white"
             android:layout_height="wrap_content" />
     </RelativeLayout>

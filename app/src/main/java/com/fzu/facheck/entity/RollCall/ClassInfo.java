@@ -15,6 +15,7 @@ public class ClassInfo {
     public static class Student{
         private String phoneNumber;
         private String name;
+        private String studentId;
         public Student(String id,String name){
             this.phoneNumber=id;
             this.name=name;
@@ -25,6 +26,7 @@ public class ClassInfo {
         public String getPhoneNumber(){
             return phoneNumber;
         }
+        public String getStudentId(){return studentId;}
     }
     public static class Record{
         private String recordid;

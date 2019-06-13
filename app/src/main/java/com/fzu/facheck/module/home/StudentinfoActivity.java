@@ -4,7 +4,9 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -76,10 +78,22 @@ public class StudentinfoActivity extends RxBaseActivity {
 
     @Override
     public void initToolBar() {
-        mtoolbar.setNavigationIcon(R.drawable.backicon);
+        mtoolbar.setTitle("");
         title_text.setText(studentname);
-        mtoolbar.setNavigationOnClickListener(v->finish());
+        setSupportActionBar(mtoolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
     }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     @Override
     public void loadData(){
         final JSONObject userobject=new JSONObject();
@@ -113,8 +127,6 @@ public class StudentinfoActivity extends RxBaseActivity {
         linearLayout.setVisibility(View.VISIBLE);
         if(master)
             exitclass.setVisibility(View.VISIBLE);
-        else
-            exitclass.setVisibility(View.GONE);
     }
     public void initEmptyView() {
         mCustomEmptyView.setVisibility(View.VISIBLE);

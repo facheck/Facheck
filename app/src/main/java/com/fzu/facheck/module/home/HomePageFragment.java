@@ -59,6 +59,9 @@ public class HomePageFragment extends RxLazyFragment  {
 
     private String date = getTime();
     private boolean mIsRefreshing = false;
+
+    private boolean isFirstCreated=true;
+
     private SectionedRecyclerViewAdapter mSectionedAdapter;
     private RollCallInfo results = new RollCallInfo();
 
@@ -114,6 +117,16 @@ public class HomePageFragment extends RxLazyFragment  {
 
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(!isFirstCreated){
+            clearData();
+            loadData();
+        }
+        else
+            isFirstCreated=false;
+    }
 
     @Override
     protected void initRefreshLayout() {

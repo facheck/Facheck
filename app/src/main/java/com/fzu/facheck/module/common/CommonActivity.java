@@ -5,7 +5,9 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.fzu.facheck.R;
@@ -44,9 +46,21 @@ public class CommonActivity extends RxBaseActivity {
 
     @Override
     public void initToolBar() {
-        mtoolbar.setNavigationIcon(R.drawable.backicon);
+        mtoolbar.setTitle("");
         title_text.setText(title);
-        mtoolbar.setNavigationOnClickListener(v->finish());
+        setSupportActionBar(mtoolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
