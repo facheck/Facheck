@@ -16,10 +16,12 @@ public class MyDialog extends Dialog {
     public MyDialog(Context context) {
         super(context);
     }
+
     public MyDialog(Context context, int themeResId) {
         super(context, themeResId);
     }
-    public static class Builder{
+
+    public static class Builder {
         private Context context;
         private String title;
         private String msg;
@@ -28,45 +30,53 @@ public class MyDialog extends Dialog {
         private TextView msgText;
         private OnClickListener leftClick;
         private OnClickListener rightClick;
-        public Builder(Context context){
-            this.context=context;
+
+        public Builder(Context context) {
+            this.context = context;
         }
-        public Builder setTitle(String title){
-            this.title=title;
+
+        public Builder setTitle(String title) {
+            this.title = title;
             return this;
         }
-        public Builder setLeft(OnClickListener listener){
-            this.leftClick=listener;
+
+        public Builder setLeft(OnClickListener listener) {
+            this.leftClick = listener;
             return this;
         }
-        public Builder setRight(OnClickListener listener){
-            this.rightClick=listener;
+
+        public Builder setRight(OnClickListener listener) {
+            this.rightClick = listener;
             return this;
         }
-        public Builder setcontentView(View view){
-            this.contentView=view;
+
+        public Builder setcontentView(View view) {
+            this.contentView = view;
             return this;
         }
-        public Builder setMsg(String msg){
-            this.msg=msg;
+
+        public Builder setMsg(String msg) {
+            this.msg = msg;
             return this;
         }
-        public String getpass(){
+
+        public String getpass() {
             return passText.getText().toString();
         }
-        public MyDialog create(int type){
-            LayoutInflater inflater=(LayoutInflater)context.getSystemService(
+
+        public MyDialog create(int type) {
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(
                     Context.LAYOUT_INFLATER_SERVICE);
-            final MyDialog dialog=new MyDialog(context,R.style.custom_dialog2);
+            final MyDialog dialog = new MyDialog(context, R.style.custom_dialog2);
             dialog.setCanceledOnTouchOutside(false);
             dialog.setCancelable(false);
-            View layout=inflater.inflate(R.layout.my_dialog_layout,null);
-            dialog.addContentView(layout,new LinearLayout.LayoutParams(LinearLayout.LayoutParams
-            .MATCH_PARENT,RadioGroup.LayoutParams.WRAP_CONTENT));
-            ((TextView)layout.findViewById(R.id.title)).setText(title);
-            passText=(EditText)layout.findViewById(R.id.password);
-            msgText=(TextView)layout.findViewById(R.id.dialog_msg);
-            switch (type){
+            View layout = inflater.inflate(R.layout.my_dialog_layout, null);
+            dialog.addContentView(layout, new LinearLayout.LayoutParams(LinearLayout.LayoutParams
+                    .MATCH_PARENT, RadioGroup.LayoutParams.WRAP_CONTENT));
+            ((TextView) layout.findViewById(R.id.title)).setText(title);
+            passText = (EditText) layout.findViewById(R.id.password);
+            msgText = (TextView) layout.findViewById(R.id.dialog_msg);
+            switch (type) {
                 case 1:
                     msgText.setVisibility(View.GONE);
                     break;
@@ -75,19 +85,19 @@ public class MyDialog extends Dialog {
                     msgText.setText(msg);
                     break;
             }
-            if(leftClick!=null){
-                ((TextView)layout.findViewById(R.id.left)).setOnClickListener(new View.OnClickListener() {
+            if (leftClick != null) {
+                ((TextView) layout.findViewById(R.id.left)).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        leftClick.onClick(dialog,DialogInterface.BUTTON_NEGATIVE);
+                        leftClick.onClick(dialog, DialogInterface.BUTTON_NEGATIVE);
                     }
                 });
             }
-            if(rightClick!=null){
-                ((TextView)layout.findViewById(R.id.right)).setOnClickListener(new View.OnClickListener() {
+            if (rightClick != null) {
+                ((TextView) layout.findViewById(R.id.right)).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        rightClick.onClick(dialog,DialogInterface.BUTTON_POSITIVE);
+                        rightClick.onClick(dialog, DialogInterface.BUTTON_POSITIVE);
                     }
                 });
             }

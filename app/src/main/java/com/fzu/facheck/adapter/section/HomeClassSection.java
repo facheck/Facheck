@@ -331,7 +331,7 @@ public class HomeClassSection extends StatelessSection {
             if (amapLocation != null) {
                 if (amapLocation.getErrorCode() == 0) {
                     mLocation = amapLocation;
-
+                    Log.e("Amap1", String.valueOf(mLocation.getAltitude()));
                 } else {
                     //定位失败时，可通过ErrCode（错误码）信息来确定失败的原因，errInfo是错误信息，详见错误码表。
                     Log.e("AmapError", "location Error, ErrCode:"

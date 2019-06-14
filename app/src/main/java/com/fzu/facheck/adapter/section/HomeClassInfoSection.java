@@ -177,7 +177,7 @@ public class HomeClassInfoSection extends StatelessSection {
 
                     itemViewHolder.relativeLayout.setOnClickListener(v -> {
                         Intent intent = new Intent(mContext, RollCallResultActivity.class);
-                        intent.putExtra("record_id", record.getRecordid());
+                        intent.putExtra("record_id", record.getRecordId());
                         intent.putExtra("class_title", ((ClassPageActivity) mContext).classname);
                         mContext.startActivity(intent);
                     });

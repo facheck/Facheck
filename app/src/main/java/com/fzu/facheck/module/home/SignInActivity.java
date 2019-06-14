@@ -1,5 +1,6 @@
 package com.fzu.facheck.module.home;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -27,6 +28,7 @@ import com.fzu.facheck.network.RetrofitHelper;
 import com.fzu.facheck.utils.ConstantUtil;
 import com.fzu.facheck.utils.PhotoUtil;
 import com.fzu.facheck.utils.PreferenceUtil;
+import com.fzu.facheck.widget.AlertDialog;
 import com.fzu.facheck.widget.CircleProgressView;
 import com.fzu.facheck.widget.CustomImageDialog;
 import com.fzu.facheck.widget.sectioned.SectionedRecyclerViewAdapter;
@@ -77,6 +79,7 @@ public class SignInActivity extends RxBaseActivity {
     private File outImage;
     private MaterialDialog waitForDialog;
     private MaterialDialog reminderDialog;
+    private AlertDialog alertDialog;
     private JSONObject jsonObject;
     private AMapLocation mLocation;
 
@@ -94,20 +97,20 @@ public class SignInActivity extends RxBaseActivity {
             mTitle = newIntent.getStringExtra(ConstantUtil.EXTRA_CLASS_TITLE) + "-签到";
             mClassId = newIntent.getStringExtra(ConstantUtil.EXTRA_CLASS_ID);
         }
-
+        initDialog();
         initToolBar();
         initBaseDialog();
-        initDialog();
 
         selfile.setOnClickListener(v -> {
             if (selfile.getDrawable() == null) {
-            Intent intent = new Intent(SignInActivity.this, CameraActivity.class);
-            startActivityForResult(intent, TAKE_POTHO);
-        } else {
-            CustomImageDialog customImageDialog = null;
-            customImageDialog = new CustomImageDialog(SignInActivity.this, outImage);
-            customImageDialog.show();
-        }});
+                Intent intent = new Intent(SignInActivity.this, CameraActivity.class);
+                startActivityForResult(intent, TAKE_POTHO);
+            } else {
+                CustomImageDialog customImageDialog = null;
+                customImageDialog = new CustomImageDialog(SignInActivity.this, outImage);
+                customImageDialog.show();
+            }
+        });
 
         btDel.setVisibility(View.INVISIBLE);
 
@@ -171,9 +174,26 @@ public class SignInActivity extends RxBaseActivity {
             @Override
             public void onClick(View v) {
                 if (selfile.getDrawable() == null) {
-                    reminderDialog.show();
+
+                    alertDialog.setTitle("签到失败！");
+                    alertDialog.setType("failure");
+                    alertDialog.setMessage("请先上传自拍照！");
+                    alertDialog.showup();
+                    alertDialog.show();
+
+                } else if (mLocation == null) {
+                    alertDialog.setTitle("签到失败！");
+                    alertDialog.setType("failure");
+                    alertDialog.setMessage("当前网络状况不稳定\n请检查网络连接状况！");
+                    alertDialog.showup();
+                    alertDialog.show();
+
                 } else {
-                    waitForDialog.show();
+                    alertDialog.setTitle("请稍后...");
+                    alertDialog.setType("failure");
+                    alertDialog.setMessage("正在上传和识别...");
+                    alertDialog.showup();
+                    alertDialog.show();
                     uploadData();
 
 
@@ -224,13 +244,21 @@ public class SignInActivity extends RxBaseActivity {
                 .canceledOnTouchOutside(false)//点击外部不取消对话框
                 .build();
 
+        alertDialog = new AlertDialog(this);
+        alertDialog.setCancelOnclickListener(new AlertDialog.cancelOnclickListener() {
+            @Override
+            public void onCancelClick() {
+                alertDialog.dismiss();
+            }
+        });
+
+
+
+
     }
-
-
     public void initBaseDialog() {
 
         reminderDialog = new MaterialDialog.Builder(this)
-                .content("请先上传自拍照！")
                 .positiveColor(getResources().getColor(R.color.colorPrimary))
                 .positiveText("确认")
                 .build();
@@ -244,15 +272,10 @@ public class SignInActivity extends RxBaseActivity {
         try {
             jsonObject.put("comparedPhoto", photo);
             mLocation = HomeClassSection.getmLocation();
-            if (mLocation != null) {
 
-                jsonObject.put("longitude", mLocation.getLongitude());
-                jsonObject.put("latitude", mLocation.getLatitude());
-            } else {
-                //当前网络状况不好 无法定位 请移到网络状况良好的地区
-                jsonObject.put("longitude", -999.00);
-                jsonObject.put("latitude", -999.00);
-            }
+            jsonObject.put("longitude", mLocation.getLongitude());
+            jsonObject.put("latitude", mLocation.getLatitude());
+
             String phone_number = PreferenceUtil.getString(ConstantUtil.PHONE_NUMBER, "wrong");
 
             jsonObject.put("phoneNumber", phone_number);
@@ -276,25 +299,49 @@ public class SignInActivity extends RxBaseActivity {
 
                 .subscribe(resultBeans -> {
 
-                    waitForDialog.dismiss();
 
                     switch (resultBeans.getCode()) {
                         case "0300":
-                            reminderDialog.setContent("签到成功！");
+                            alertDialog.setTitle("签到成功！");
+                            alertDialog.setType("success");
+                            alertDialog.setMessage("好好学习哦！");
                             break;
                         case "0301":
+                            alertDialog.setTitle("签到失败！");
+                            alertDialog.setType("failure");
+                            alertDialog.setMessage("还未开启点名！");
+                            break;
                         case "0302":
+                            alertDialog.setTitle("签到失败！");
+                            alertDialog.setType("failure");
+                            alertDialog.setMessage("不允许重复签到！");
+                            break;
                         case "0303":
+                            alertDialog.setTitle("签到失败！");
+                            alertDialog.setType("failure");
+                            alertDialog.setMessage("未监测到人脸！");
+                            break;
                         case "0304":
+                            alertDialog.setTitle("签到失败！");
+                            alertDialog.setType("failure");
+                            alertDialog.setMessage("人脸对比失败！");
+                            break;
                         case "0305":
+                            alertDialog.setTitle("签到失败！");
+                            alertDialog.setType("failure");
+                            alertDialog.setMessage("您不在点名范围内！");
+                            break;
                         case "0306":
+                            alertDialog.setTitle("签到失败！");
+                            alertDialog.setType("failure");
+                            alertDialog.setMessage("请重新再试！");
+                            break;
 
-                            reminderDialog.setContent("签到失败，请重新再试！");
 
 
                     }
-
-                    reminderDialog.show();
+                    alertDialog.showup();
+                    alertDialog.show();
 
 
                 });

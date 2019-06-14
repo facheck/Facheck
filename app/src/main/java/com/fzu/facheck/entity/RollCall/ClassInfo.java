@@ -27,7 +27,7 @@ public class ClassInfo {
         }
     }
     public static class Record{
-        private String recordid;
+        private String recordId;
         private String time;
         private String attendanceRatio;
         private String attendanceRate;
@@ -35,7 +35,7 @@ public class ClassInfo {
         public Record(String recordid,String time,String attendanceRatio,String attendanceRate){
             this.time=time;
             this.attendanceRatio=attendanceRatio;
-            this.recordid=recordid;
+            this.recordId=recordid;
             this.attendanceRate = attendanceRate;
         }
         public String getTime(){
@@ -44,7 +44,7 @@ public class ClassInfo {
         public String getAttendanceRatio(){
             return attendanceRatio;
         }
-        public String getRecordid(){return recordid;}
+        public String getRecordId(){return recordId;}
         public String getAttendanceRate(){return attendanceRate;}
 
     }

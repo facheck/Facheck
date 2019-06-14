@@ -144,12 +144,14 @@ public class RollCallResultActivity extends RxBaseActivity {
 
     @Override
     public void showProgressBar() {
+        mPieChart.setVisibility(View.INVISIBLE);
         mCircleProgressView.setVisibility(View.VISIBLE);
         mCircleProgressView.spin();
     }
 
     @Override
     public void hideProgressBar() {
+        mPieChart.setVisibility(View.VISIBLE);
         mCircleProgressView.setVisibility(View.GONE);
         mCircleProgressView.stopSpinning();
     }

@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/roll_call_result_height"
     android:background="@drawable/bg_border"
-    android:elevation="@dimen/card_elevation"
     android:foreground="?attr/selectableItemBackground"
     android:id="@+id/roll_call_result_body">
 
