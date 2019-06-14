@@ -135,10 +135,10 @@ public class HomeClassInfoSection extends StatelessSection {
                     itemViewHolder.relativeLayout.setOnClickListener(v -> {
                         Intent intent = new Intent(mContext, StudentinfoActivity.class);
                         intent.putExtra("master", ((ClassPageActivity) mContext).master);
-                        intent.putExtra("studentname", student.getName());
-                        intent.putExtra("phoneNumber", student.getPhoneNumber());
-                        intent.putExtra("classname", ((ClassPageActivity) mContext).classname);
-                        intent.putExtra("classid", ((ClassPageActivity) mContext).classid);
+                        intent.putExtra("studentName", student.getName());
+                        intent.putExtra("studentId", student.getStudentId());
+                        intent.putExtra("className", ((ClassPageActivity) mContext).classname);
+                        intent.putExtra("classId", ((ClassPageActivity) mContext).classid);
                         mContext.startActivity(intent);
                     });
                 }
@@ -163,6 +163,8 @@ public class HomeClassInfoSection extends StatelessSection {
                     itemViewHolder.relativeLayout.setOnClickListener(v -> {
                         Intent intent = new Intent(mContext, RollCallResultActivity.class);
                         intent.putExtra("record_id", record.getRecordId());
+                        intent.putExtra("master",((ClassPageActivity)mContext).master);
+                        intent.putExtra("classId",((ClassPageActivity)mContext).classid);
                         intent.putExtra("class_title", ((ClassPageActivity) mContext).classname);
                         mContext.startActivity(intent);
                     });

@@ -144,6 +144,7 @@ public class HomeClassSection extends StatelessSection {
                         mRecordId = PreferenceUtil.getString(createdData.get(position).getManagedClassId(),"wrong");
                         intent.putExtra("record_id",mRecordId);
                         intent.putExtra("class_title",itemViewHolder.mClassName.getText());
+                        intent.putExtra("classId",createdData.get(position).getManagedClassId());
                         Log.i(TAG, "onBindItemViewHolder: "+mRecordId);
 
                         mContext.startActivity(intent);
