@@ -152,10 +152,12 @@ public class HomeClassSection extends StatelessSection {
                     } else if (managedClassData.isAbleRollCall().equals("2")) {
                         Intent intent = new Intent(mContext, RollCallResultActivity.class);
 
-                        mRecordId = PreferenceUtil.getString(createdData.get(position).getManagedClassId(), "wrong");
-                        intent.putExtra("record_id", mRecordId);
-                        intent.putExtra("class_title", itemViewHolder.mClassName.getText());
-                        Log.i(TAG, "onBindItemViewHolder: " + mRecordId);
+
+                        mRecordId = PreferenceUtil.getString(createdData.get(position).getManagedClassId(),"wrong");
+                        intent.putExtra("record_id",mRecordId);
+                        intent.putExtra("class_title",itemViewHolder.mClassName.getText());
+                        intent.putExtra("classId",createdData.get(position).getManagedClassId());
+                        Log.i(TAG, "onBindItemViewHolder: "+mRecordId);
 
                         resetAbleRollCall(managedClassData.getManagedClassId());
 
