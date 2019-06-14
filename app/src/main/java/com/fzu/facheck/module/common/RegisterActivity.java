@@ -1,8 +1,10 @@
 package com.fzu.facheck.module.common;
 
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -127,9 +129,21 @@ public class RegisterActivity extends RxBaseActivity {
 
     @Override
     public void initToolBar() {
-        mtoolbar.setNavigationIcon(R.drawable.backicon);
+        mtoolbar.setTitle("");
         title_text.setText("注册账号");
-        mtoolbar.setNavigationOnClickListener(v->finish());
+        setSupportActionBar(mtoolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
