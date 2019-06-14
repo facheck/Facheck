@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.fzu.facheck.R;
 import com.fzu.facheck.entity.RollCall.RollCallResult;
 import com.fzu.facheck.module.home.ClassPageActivity;
+import com.fzu.facheck.module.home.RollCallResultActivity;
 import com.fzu.facheck.module.home.StudentinfoActivity;
 import com.fzu.facheck.widget.sectioned.StatelessSection;
 
@@ -66,21 +67,29 @@ public class RollCallResultSection extends StatelessSection {
                 final RollCallResult.RecordInfoBean.NotYetSignedInBean notYetSignedInBean = notSignedBeans.get(position);
                 itemViewHolder.mStudentID.setText(notYetSignedInBean.getAuthenticationId());
                 itemViewHolder.mStudentName.setText(notYetSignedInBean.getName());
-//                itemViewHolder.mRollCallResultBody.setOnClickListener(v -> {
-//                    Intent intent = new Intent(mContext, StudentinfoActivity.class);
-//                    intent.putExtra("master", ((ClassPageActivity) mContext).master);
-//                    intent.putExtra("studentname", notYetSignedInBean.getName());
-//                    intent.putExtra("phoneNumber", student.getPhoneNumber());
-//                    intent.putExtra("classname", ((ClassPageActivity) mContext).classname);
-//                    intent.putExtra("classid", ((ClassPageActivity) mContext).classid);
-//                    mContext.startActivity(intent);
-//                });
+                itemViewHolder.mRollCallResultBody.setOnClickListener(v -> {
+                    Intent intent = new Intent(mContext, StudentinfoActivity.class);
+                    intent.putExtra("master", ((RollCallResultActivity) mContext).master);
+                    intent.putExtra("studentName", notYetSignedInBean.getName());
+                    intent.putExtra("studentId", notYetSignedInBean.getAuthenticationId());
+                    intent.putExtra("className", ((RollCallResultActivity) mContext).mTitle);
+                    intent.putExtra("classId", ((RollCallResultActivity) mContext).classId);
+                    mContext.startActivity(intent);
+                });
                 break;
             case SIGNED:
                 final RollCallResult.RecordInfoBean.AlreadySignedInBean alreadySignedInBean = signedBeans.get(position);
                 itemViewHolder.mStudentID.setText(alreadySignedInBean.getAuthenticationId());
                 itemViewHolder.mStudentName.setText(alreadySignedInBean.getName());
-
+                itemViewHolder.mRollCallResultBody.setOnClickListener(v->{
+                    Intent intent=new Intent(mContext,StudentinfoActivity.class);
+                    intent.putExtra("master", ((RollCallResultActivity) mContext).master);
+                    intent.putExtra("studentName", alreadySignedInBean.getName());
+                    intent.putExtra("studentId", alreadySignedInBean.getAuthenticationId());
+                    intent.putExtra("className", ((RollCallResultActivity) mContext).mTitle);
+                    intent.putExtra("classId", ((RollCallResultActivity) mContext).classId);
+                    mContext.startActivity(intent);
+                });
                 break;
 
         }

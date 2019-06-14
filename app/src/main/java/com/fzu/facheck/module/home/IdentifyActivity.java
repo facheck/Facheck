@@ -120,6 +120,8 @@ public class IdentifyActivity extends RxBaseActivity {
                             }
                             else if(stateInfo.code.equals("0201"))
                                 ToastUtil.showShort(IdentifyActivity.this,"认证失败");
+                            else if(stateInfo.code.equals("0203"))
+                                ToastUtil.showShort(IdentifyActivity.this,"该学号已经被认证");
                             else
                                 ToastUtil.showShort(IdentifyActivity.this,"其他情况错误");
                         }

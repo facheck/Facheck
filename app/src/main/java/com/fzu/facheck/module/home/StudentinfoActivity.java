@@ -32,10 +32,11 @@ import rx.schedulers.Schedulers;
 
 public class StudentinfoActivity extends RxBaseActivity {
     private String studentname;
-    private String phoneNumber;
+    private String studentid;
     private String classname;
     private String classid;
     private boolean master;
+    private String phoneNumber;
     @BindView(R.id.toolbar)
     Toolbar mtoolbar;
     @BindView(R.id.toolbar_title)
@@ -65,13 +66,13 @@ public class StudentinfoActivity extends RxBaseActivity {
     @Override
     public void initViews(Bundle savedInstanceState) {
         Intent intent=getIntent();
-        studentname=intent.getStringExtra("studentname");
-        phoneNumber=intent.getStringExtra("phoneNumber");
-        classname=intent.getStringExtra("classname");
-        classid=intent.getStringExtra("classid");
+        studentname=intent.getStringExtra("studentName");
+        studentid=intent.getStringExtra("studentId");
+        classname=intent.getStringExtra("className");
+        classid=intent.getStringExtra("classId");
         master=intent.getBooleanExtra("master",false);
         nameText.setText(studentname);
-        phoneText.setText(phoneNumber);
+        idText.setText(studentid);
         classText.setText(classname);
         loadData();
     }
@@ -98,7 +99,7 @@ public class StudentinfoActivity extends RxBaseActivity {
     public void loadData(){
         final JSONObject userobject=new JSONObject();
         try {
-            userobject.put("phoneNumber",phoneNumber);
+            userobject.put("studentId",studentid);
             userobject.put("classId",classid);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -113,7 +114,8 @@ public class StudentinfoActivity extends RxBaseActivity {
                     if(resultbean.code.equals("1800")){
                         hideEmptyView();
                         rateText.setText(resultbean.attendanceRatio);
-                        idText.setText(resultbean.studentId);
+                        phoneNumber=resultbean.phoneNumber;
+                        phoneText.setText(resultbean.phoneNumber);
                     }
                     else
                         initEmptyView();
