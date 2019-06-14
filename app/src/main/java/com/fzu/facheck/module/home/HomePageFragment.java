@@ -191,14 +191,14 @@ public class HomePageFragment extends RxLazyFragment  {
 
         switch (code){
             case "0900":
-                mSectionedAdapter.addSection(new HomeClassSection(results.getClassInfo(), "jointed_data", getActivity()));
-                mSectionedAdapter.addSection(new HomeClassSection(results.getClassInfo(), "created_data", getActivity()));
+                mSectionedAdapter.addSection(new HomeClassSection(results.getClassInfo(), "jointed_data", mSwipeRefreshLayout,getActivity()));
+                mSectionedAdapter.addSection(new HomeClassSection(results.getClassInfo(), "created_data",mSwipeRefreshLayout, getActivity()));
                 break;
             case "0901":
-                mSectionedAdapter.addSection(new HomeClassSection(results.getClassInfo(), "jointed_data", getActivity()));
+                mSectionedAdapter.addSection(new HomeClassSection(results.getClassInfo(), "jointed_data",mSwipeRefreshLayout, getActivity()));
                 break;
             case "0902":
-                mSectionedAdapter.addSection(new HomeClassSection(results.getClassInfo(), "created_data", getActivity()));
+                mSectionedAdapter.addSection(new HomeClassSection(results.getClassInfo(), "created_data",mSwipeRefreshLayout, getActivity()));
                 break;
         }
 
@@ -242,6 +242,10 @@ public class HomePageFragment extends RxLazyFragment  {
 
     private void setRecycleNoScroll() {
         mRecyclerView.setOnTouchListener((v, event) -> mIsRefreshing);
+    }
+
+    public void setIsRefreshing(boolean status){
+        mIsRefreshing = status;
     }
 
 

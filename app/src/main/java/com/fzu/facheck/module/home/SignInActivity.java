@@ -97,6 +97,9 @@ public class SignInActivity extends RxBaseActivity {
             mTitle = newIntent.getStringExtra(ConstantUtil.EXTRA_CLASS_TITLE) + "-签到";
             mClassId = newIntent.getStringExtra(ConstantUtil.EXTRA_CLASS_ID);
         }
+
+        mLocation = HomeClassSection.getmLocation();
+
         initDialog();
         initToolBar();
         initBaseDialog();
@@ -190,7 +193,7 @@ public class SignInActivity extends RxBaseActivity {
 
                 } else {
                     alertDialog.setTitle("请稍后...");
-                    alertDialog.setType("failure");
+                    alertDialog.setType("loading");
                     alertDialog.setMessage("正在上传和识别...");
                     alertDialog.showup();
                     alertDialog.show();
@@ -271,7 +274,6 @@ public class SignInActivity extends RxBaseActivity {
         String photo = PhotoUtil.base64(PhotoUtil.amendRotatePhoto(PhotoUtil.getPath()));
         try {
             jsonObject.put("comparedPhoto", photo);
-            mLocation = HomeClassSection.getmLocation();
 
             jsonObject.put("longitude", mLocation.getLongitude());
             jsonObject.put("latitude", mLocation.getLatitude());

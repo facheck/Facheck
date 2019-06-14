@@ -44,10 +44,14 @@
         <!--设置背景-->
         <item name="android:colorBackground">@color/primary_alpha_30</item>
         <!--设置字体颜色-->
+        <item name="android:layout_width">200dp</item>
         <item name="android:textColorPrimary">@android:color/white</item>
         <!--设置不覆盖锚点-->
         <item name="overlapAnchor">false</item>
         <item name="android:textColorSecondary">#ffffff</item>
+        <item name="android:divider">@color/white</item><!--menu列表项分割线的颜色-->
+        <item name="android:dividerHeight">3px</item><!--menu列表项分割线的高度-->
+
 
 
     </style>

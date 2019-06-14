@@ -3,6 +3,7 @@ package com.fzu.facheck.adapter.section;
 import android.content.Context;
 import android.content.Intent;
 import android.location.LocationManager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
@@ -25,6 +26,7 @@ import com.fzu.facheck.network.RetrofitHelper;
 import com.fzu.facheck.utils.ConstantUtil;
 import com.fzu.facheck.utils.PreferenceUtil;
 import com.fzu.facheck.utils.RxTimerUtil;
+import com.fzu.facheck.widget.AlertDialog;
 import com.fzu.facheck.widget.sectioned.StatelessSection;
 
 import org.json.JSONException;
@@ -51,7 +53,8 @@ public class HomeClassSection extends StatelessSection {
     private int rollCallTime;
     private OptionsPickerView pvOptions;
     private JSONObject jsonObject;
-
+    private AlertDialog alertDialog;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
 
     private static AMapLocation mLocation; //当前点的位置
@@ -64,15 +67,17 @@ public class HomeClassSection extends StatelessSection {
     String TAG = "Home";
 
 
-
-    public HomeClassSection( RollCallInfo.ClassInfoBean data,String type,Context context) {
+    public HomeClassSection(RollCallInfo.ClassInfoBean data, String type, SwipeRefreshLayout mSwipeRefreshLayout,
+            Context context) {
         super(R.layout.layout_home_class_header, R.layout.layout_home_class);
         this.jointedData = data.getJoinedClassData();
         this.createdData = data.getManagedClassData();
         this.type = type;
         this.mContext = context;
+        this.mSwipeRefreshLayout = mSwipeRefreshLayout;
         getOptionData();
         initAmapLocation();
+        initDialog();
     }
 
 
@@ -104,8 +109,8 @@ public class HomeClassSection extends StatelessSection {
 
                         Intent intent = new Intent(mContext, SignInActivity.class);
 
-                        intent.putExtra("class_id",joinedClassDataBean.getJoinedClassId());
-                        intent.putExtra("class_title",itemViewHolder.mClassName.getText());
+                        intent.putExtra("class_id", joinedClassDataBean.getJoinedClassId());
+                        intent.putExtra("class_title", itemViewHolder.mClassName.getText());
 
                         mContext.startActivity(intent);
 
@@ -122,12 +127,19 @@ public class HomeClassSection extends StatelessSection {
                 final RollCallInfo.ClassInfoBean.ManagedClassDataBean managedClassData = createdData.get(position);
                 itemViewHolder.mClassName.setText(managedClassData.getManagedClassName());
                 itemViewHolder.mClassDuration.setText(getDtime(managedClassData.getManagedClassTime()));
-                if (managedClassData.isAbleRollCall()) {
+                if (managedClassData.isAbleRollCall().equals("0")) {
+                    //开始点名
                     itemViewHolder.mBtn.setText(R.string.roll_call_on);
                     itemViewHolder.mBtn.setBackgroundResource(R.drawable.btn_rollcall_green);
 
 
-                } else {
+                } else if (managedClassData.isAbleRollCall().equals("1")) {
+                    //正在点名
+                    itemViewHolder.mBtn.setText(R.string.roll_calling);
+                    itemViewHolder.mBtn.setBackgroundResource(R.drawable.btn_rollcall_blue);
+
+                } else if (managedClassData.isAbleRollCall().equals("2")) {
+                    //点名结束
                     itemViewHolder.mBtn.setText(R.string.roll_call_off);
                     itemViewHolder.mBtn.setBackgroundResource(R.drawable.btn_rollcall_gray);
 
@@ -135,16 +147,17 @@ public class HomeClassSection extends StatelessSection {
 
                 itemViewHolder.mBtn.setOnClickListener(v -> {
 
-                    if (createdData.get(position).isAbleRollCall()) {
-                        initOptionPicker(position,itemViewHolder);
-                    }else{
+                    if (managedClassData.isAbleRollCall().equals("0")) {
+                        initOptionPicker(position, itemViewHolder);
+                    } else if (managedClassData.isAbleRollCall().equals("2")) {
                         Intent intent = new Intent(mContext, RollCallResultActivity.class);
 
+                        mRecordId = PreferenceUtil.getString(createdData.get(position).getManagedClassId(), "wrong");
+                        intent.putExtra("record_id", mRecordId);
+                        intent.putExtra("class_title", itemViewHolder.mClassName.getText());
+                        Log.i(TAG, "onBindItemViewHolder: " + mRecordId);
 
-                        mRecordId = PreferenceUtil.getString(createdData.get(position).getManagedClassId(),"wrong");
-                        intent.putExtra("record_id",mRecordId);
-                        intent.putExtra("class_title",itemViewHolder.mClassName.getText());
-                        Log.i(TAG, "onBindItemViewHolder: "+mRecordId);
+                        resetAbleRollCall(managedClassData.getManagedClassId());
 
                         mContext.startActivity(intent);
                         itemViewHolder.mBtn.setText(R.string.roll_call_on);
@@ -164,7 +177,7 @@ public class HomeClassSection extends StatelessSection {
 
         HeaderViewHolder headerViewHolder = (HeaderViewHolder) holder;
 
-        switch (type){
+        switch (type) {
             case JOINTED_DATA:
                 headerViewHolder.tileClass.setText(R.string.class_I_jointed);
                 break;
@@ -216,14 +229,25 @@ public class HomeClassSection extends StatelessSection {
         }
     }
 
-    private void getOptionData(){
-        for(int i =1;i<=10;i++){
-            minutes.add(i+"");
+    private void getOptionData() {
+        for (int i = 1; i <= 10; i++) {
+            minutes.add(i + "");
         }
     }
 
-    private void initOptionPicker(int position,ItemViewHolder itemViewHolder){
-        pvOptions = new OptionsPickerBuilder(mContext, (options1, option2, options3, v1) ->{rollCallTime = Integer.valueOf(minutes.get(options1));uploadData(position, itemViewHolder);} )
+    private void initOptionPicker(int position, ItemViewHolder itemViewHolder) {
+        pvOptions = new OptionsPickerBuilder(mContext, (options1, option2, options3, v1) -> {
+            rollCallTime = Integer.valueOf(minutes.get(options1));
+            if (mLocation != null) {
+                uploadData(position, itemViewHolder);
+            } else {
+                alertDialog.setTitle("点名失败！");
+                alertDialog.setType("failure");
+                alertDialog.setMessage("当前网络状况不稳定\n请检查网络连接状况！");
+                alertDialog.showup();
+                alertDialog.show();
+            }
+        })
                 .setTitleText("选择点名时间／分钟")
                 .setSelectOptions(4)//默认选中项
                 .build();
@@ -231,29 +255,24 @@ public class HomeClassSection extends StatelessSection {
         pvOptions.show();
     }
 
-    private RequestBody initRequestbody(int position){
+    private RequestBody initRequestbody(int position) {
 
         jsonObject = new JSONObject();
 
         try {
-            if(mLocation!=null){
 
-                jsonObject .put("longitude",mLocation.getLongitude());
-                jsonObject .put("latitude",mLocation.getLatitude());
-            }else{
-                //当前网络状况不好 无法定位 请移到网络状况良好的地区
-                jsonObject .put("longitude",119.30);
-                jsonObject .put("latitude",26.08);
-            }
-            jsonObject .put("classId",createdData.get(position).getManagedClassId());
-            jsonObject .put("timeInterval",rollCallTime);
+            jsonObject.put("longitude", mLocation.getLongitude());
+            jsonObject.put("latitude", mLocation.getLatitude());
+
+            jsonObject.put("classId", createdData.get(position).getManagedClassId());
+            jsonObject.put("timeInterval", rollCallTime);
 
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        RequestBody requestBody = RequestBody.create(MediaType.parse("application/json;charset=utf-8"),  jsonObject.toString());
+        RequestBody requestBody = RequestBody.create(MediaType.parse("application/json;charset=utf-8"), jsonObject.toString());
         return requestBody;
     }
 
@@ -261,7 +280,7 @@ public class HomeClassSection extends StatelessSection {
         return mLocation;
     }
 
-    private void uploadData(int position,ItemViewHolder itemViewHolder){
+    private void uploadData(int position, ItemViewHolder itemViewHolder) {
         RetrofitHelper.getRollCallAPI()
                 .getStartRollCallById(initRequestbody(position))
                 .subscribeOn(Schedulers.io())
@@ -273,20 +292,25 @@ public class HomeClassSection extends StatelessSection {
 
 
                         PreferenceUtil.put(createdData.get(position).getManagedClassId(), resultBeans.getRecordId());
+                        mSwipeRefreshLayout.setEnabled(false);
 
                         itemViewHolder.mBtn.setBackgroundResource(R.drawable.btn_rollcall_blue);
                         itemViewHolder.mBtn.setText(R.string.roll_calling);
                         RxTimerUtil.timer(rollCallTime, number -> {
                                     itemViewHolder.mBtn.setText(R.string.roll_call_off);
                                     itemViewHolder.mBtn.setBackgroundResource(R.drawable.btn_rollcall_gray);
+                                    mSwipeRefreshLayout.setEnabled(true);
 
                                 }
-                               );
+                        );
 
-                        createdData.get(position).setAbleRollCall(false);
 
                     } else {
-
+                        alertDialog.setTitle("点名开启失败！");
+                        alertDialog.setType("failure");
+                        alertDialog.setMessage("请稍后再试！");
+                        alertDialog.showup();
+                        alertDialog.show();
 
                     }
 
@@ -294,6 +318,42 @@ public class HomeClassSection extends StatelessSection {
 
 
     }
+
+
+    private void resetAbleRollCall(String classId) {
+
+        jsonObject = new JSONObject();
+        try {
+            jsonObject.put("classId", classId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        RequestBody requestBody = RequestBody.create(MediaType.parse("application/json;charset=utf-8"), jsonObject.toString());
+
+
+        RetrofitHelper.getRollCallAPI()
+                .resetAbleRollCall(requestBody)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+
+                .subscribe(resultBeans -> {
+
+                    if (resultBeans.getCode().equals("1901")) {
+
+                        alertDialog.setTitle("未知错误！");
+                        alertDialog.setType("failure");
+                        alertDialog.setMessage("请稍后再试！");
+                        alertDialog.showup();
+                        alertDialog.show();
+
+                    }
+
+                });
+
+
+    }
+
 
     private void initAmapLocation() {
         //初始化定位
@@ -331,7 +391,7 @@ public class HomeClassSection extends StatelessSection {
             if (amapLocation != null) {
                 if (amapLocation.getErrorCode() == 0) {
                     mLocation = amapLocation;
-                    Log.e("Amap1", String.valueOf(mLocation.getAltitude()));
+                    Log.e("loc", String.valueOf(mLocation.getLongitude()) + "   " + mLocation.getLatitude());
                 } else {
                     //定位失败时，可通过ErrCode（错误码）信息来确定失败的原因，errInfo是错误信息，详见错误码表。
                     Log.e("AmapError", "location Error, ErrCode:"
@@ -340,12 +400,27 @@ public class HomeClassSection extends StatelessSection {
             }
         }
     };
-    private String getDtime(String s){
-        String[] all=s.split(";");
-        String s1=all[0];
-        for(int i=1;i<all.length;i++){
-            s1=s1+"\n"+all[i];
+
+    private String getDtime(String s) {
+        String[] all = s.split(";");
+        String s1 = all[0];
+        for (int i = 1; i < all.length; i++) {
+            s1 = s1 + "\n" + all[i];
         }
         return s1;
+    }
+
+    private void initDialog() {
+
+        alertDialog = new AlertDialog(mContext);
+        alertDialog.setCancelOnclickListener(new AlertDialog.cancelOnclickListener() {
+            @Override
+            public void onCancelClick() {
+                alertDialog.dismiss();
+            }
+        });
+
+
+
     }
 }

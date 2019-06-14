@@ -35,4 +35,10 @@ public interface RollCallService {
     @POST("/get_single_class_sign_in_info")
     Observable<RollCallResult> getRollCallResultById(@Body RequestBody requestBody);
 
+    /**
+     * 重置点名状态
+     */
+    @POST("/reset_able_roll_call")
+    Observable<RollCallResult> resetAbleRollCall(@Body RequestBody requestBody);
+
 }
