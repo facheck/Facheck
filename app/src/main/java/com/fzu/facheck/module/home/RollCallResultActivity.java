@@ -62,11 +62,13 @@ public class RollCallResultActivity extends RxBaseActivity {
     @BindView(R.id.circle_progress)
     CircleProgressView mCircleProgressView;
 
-    private String mTitle;
+    public String mTitle;
     private SectionedRecyclerViewAdapter mSectionedAdapter;
     private boolean mIsRefreshing = false;
     private String mRecordId;
     private RollCallResult mRollCallResult;
+    public boolean master;
+    public String classId;
 
 
     @Override
@@ -81,6 +83,8 @@ public class RollCallResultActivity extends RxBaseActivity {
         if (intent != null) {
             mTitle = intent.getStringExtra(ConstantUtil.EXTRA_CLASS_TITLE);
             mRecordId = intent.getStringExtra(ConstantUtil.EXTRA_RECORD_ID);
+            master=intent.getBooleanExtra("master",false);
+            classId=intent.getStringExtra("classId");
         }
         initRecyclerView();
         loadData();
