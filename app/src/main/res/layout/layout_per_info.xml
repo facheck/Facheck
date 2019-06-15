@@ -3,7 +3,6 @@
     android:id="@+id/item_view"
     android:layout_width="match_parent"
     android:background="@drawable/bg_border"
-    android:elevation="@dimen/card_elevation"
     android:foreground="?attr/selectableItemBackground"
     android:minHeight="@dimen/roll_call_result_height"
     android:layout_height="wrap_content">

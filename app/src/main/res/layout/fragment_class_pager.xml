@@ -122,8 +122,7 @@
                     android:text="删除班级"
                     android:gravity="center"
                     android:textColor="@color/white"
-                    android:background="@drawable/header_rounded_shape"
-                    android:backgroundTint="@color/delete_backgroud"
+                    android:background="@color/delete_backgroud"
                     android:textSize="18dp"/>
                 <LinearLayout
                     android:layout_width="match_parent"

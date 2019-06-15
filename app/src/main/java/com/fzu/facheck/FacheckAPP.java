@@ -21,14 +21,14 @@ public class FacheckAPP extends Application {
     }
 
     private void init() {
-        //初始化Leak内存泄露检测工具
-        LeakCanary.install(this);
-        //初始化Stetho调试工具
-        Stetho.initialize(
-                Stetho.newInitializerBuilder(this)
-                        .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
-                        .enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this))
-                        .build());
+//        //初始化Leak内存泄露检测工具
+//        LeakCanary.install(this);
+//        //初始化Stetho调试工具
+//        Stetho.initialize(
+//                Stetho.newInitializerBuilder(this)
+//                        .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
+//                        .enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this))
+//                        .build());
     }
 
     public static FacheckAPP getInstance() {

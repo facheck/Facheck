@@ -30,6 +30,7 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:background="@drawable/button_shape1"
+            android:backgroundTint="@color/delete_backgroud"
             android:textColor="@color/white"
             android:text="删除"
             android:layout_height="wrap_content" />

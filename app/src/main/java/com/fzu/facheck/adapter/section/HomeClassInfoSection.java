@@ -178,6 +178,7 @@ public class HomeClassInfoSection extends StatelessSection {
                 }
                 else{
                     initLineChart(itemViewHolder.lineChart);
+                    itemViewHolder.righticon.setVisibility(View.INVISIBLE);
                 }
 
 
