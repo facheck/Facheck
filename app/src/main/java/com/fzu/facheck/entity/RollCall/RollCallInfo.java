@@ -77,7 +77,6 @@ public class RollCallInfo {
             private String joinedClassName;
             private String joinedClassTime;
             private String managerName;
-            private boolean signable;
             private String attendanceRate;
             private String state;
 
@@ -113,13 +112,6 @@ public class RollCallInfo {
                 this.managerName = managerName;
             }
 
-            public boolean isSignable() {
-                return signable;
-            }
-
-            public void setSignable(boolean signable) {
-                this.signable = signable;
-            }
 
             public String getAttendanceRate() {
                 return attendanceRate;

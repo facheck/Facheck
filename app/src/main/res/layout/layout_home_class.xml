@@ -10,6 +10,7 @@
 
 
     <RelativeLayout
+        android:id="@+id/class_body"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="@dimen/home_class_layout_height"

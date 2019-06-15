@@ -19,9 +19,9 @@
         android:layout_height="45sp"
         android:background="@drawable/layer_list_draw"
         android:textSize="18sp"
+        android:textColor="@color/black_80"
         android:inputType="text"
         android:lines="1"
-        android:textColor="#CDCDC1"
         android:maxLength="16"
         android:layout_marginHorizontal="25dp"
         android:hint="  昵称"/>
@@ -41,7 +41,7 @@
         android:textSize="18sp"
         android:digits="0123456789abcdefghijklmnopqrstuvwxyz"
         android:inputType="textPassword"
-        android:textColor="#CDCDC1"
+        android:textColor="@color/black_80"
         android:maxLength="15"
         android:layout_marginHorizontal="25dp"
         android:hint="  密码(最少6位)"/>

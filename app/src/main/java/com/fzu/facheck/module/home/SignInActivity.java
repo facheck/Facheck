@@ -22,6 +22,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.fzu.facheck.R;
 import com.fzu.facheck.adapter.section.HomeClassSection;
 import com.fzu.facheck.base.RxBaseActivity;
+import com.fzu.facheck.entity.RollCall.RollCallInfo;
 import com.fzu.facheck.entity.RollCall.RollCallResult;
 import com.fzu.facheck.module.common.CameraActivity;
 import com.fzu.facheck.network.RetrofitHelper;
@@ -82,6 +83,7 @@ public class SignInActivity extends RxBaseActivity {
     private AlertDialog alertDialog;
     private JSONObject jsonObject;
     private AMapLocation mLocation;
+    private HomeClassSection.onSignInSuccess onSignInSuccess;
 
 
     @Override
@@ -307,6 +309,15 @@ public class SignInActivity extends RxBaseActivity {
                             alertDialog.setTitle("签到成功！");
                             alertDialog.setType("success");
                             alertDialog.setMessage("好好学习哦！");
+                            HomeClassSection.setSignInStatus(new HomeClassSection.onSignInSuccess() {
+                                @Override
+                                public void setSignInStatus(HomeClassSection.ItemViewHolder itemViewHolder) {
+                                    itemViewHolder.mBtn.setText(R.string.signed_in);
+                                    itemViewHolder.mBtn.setBackgroundResource(R.drawable.btn_rollcall_blue);
+                                }
+                            });
+
+
                             break;
                         case "0301":
                             alertDialog.setTitle("签到失败！");
@@ -346,10 +357,17 @@ public class SignInActivity extends RxBaseActivity {
                     alertDialog.show();
 
 
+
+
+
+
                 });
 
 
     }
+
+
+
 
 
     @Override

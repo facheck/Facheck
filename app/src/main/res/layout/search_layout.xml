@@ -9,22 +9,23 @@
         android:layout_width="match_parent"
         android:orientation="horizontal"
         android:background="@color/white"
-        android:layout_height="wrap_content">
+        android:layout_height="40dp">
         <TextView
             android:id="@+id/cancel_search"
             android:layout_width="0dp"
             android:gravity="center"
-            android:layout_height="32dp"
-            android:textColor="#5e83ff"
+            android:layout_height="40dp"
             android:layout_weight="1"
             android:text="取消"/>
         <EditText
             android:id="@+id/search_edit"
             android:drawableLeft="@drawable/ic_action_action_search"
+            android:drawableTint="@color/gray_20"
             android:layout_width="0dp"
             android:hint="请输入要搜索的班级名称"
-            android:layout_marginVertical="2dp"
-            android:background="@color/background_light"
+            android:layout_marginVertical="5dp"
+            android:background="@drawable/button_shape1"
+            android:backgroundTint="@color/background_light"
             android:textSize="15dp"
             android:inputType="text"
             android:layout_gravity="center"
@@ -34,8 +35,7 @@
             android:id="@+id/search_classes"
             android:layout_width="0dp"
             android:gravity="center"
-            android:layout_height="34dp"
-            android:textColor="#5e83ff"
+            android:layout_height="40dp"
             android:layout_weight="1"
             android:text="搜索"/>
     </LinearLayout>

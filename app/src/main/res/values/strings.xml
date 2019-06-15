@@ -11,6 +11,8 @@
     <string name="class_I_jointed">我加入的班级</string>
     <string name="not_signed_in">未签到</string>
     <string name="signed_in">已签到</string>
+    <string name="finished">已结束</string>
+
 
     <string name="class_I_created">我创建的班级</string>
     <string name="roll_call_on">开始点名</string>

@@ -1,6 +1,7 @@
 package com.fzu.facheck.module.home;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -116,6 +117,8 @@ public class HomePageFragment extends RxLazyFragment  {
 
 
     }
+
+
 
     @Override
     public void onResume() {
@@ -244,9 +247,9 @@ public class HomePageFragment extends RxLazyFragment  {
         mRecyclerView.setOnTouchListener((v, event) -> mIsRefreshing);
     }
 
-    public void setIsRefreshing(boolean status){
-        mIsRefreshing = status;
-    }
+
+
+
 
 
 }

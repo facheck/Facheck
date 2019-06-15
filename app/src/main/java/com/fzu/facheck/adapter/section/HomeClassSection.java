@@ -1,21 +1,20 @@
 package com.fzu.facheck.adapter.section;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.location.LocationManager;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
-import com.autonavi.indoor.constant.Configuration;
-import com.autonavi.indoor.location.ILocationManager;
-import com.autonavi.indoor.onlinelocation.OnlineLocator;
 import com.bigkoo.pickerview.builder.OptionsPickerBuilder;
 import com.bigkoo.pickerview.view.OptionsPickerView;
 import com.fzu.facheck.R;
@@ -43,6 +42,7 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 public class HomeClassSection extends StatelessSection {
+
     private List<RollCallInfo.ClassInfoBean.JoinedClassDataBean> jointedData;
     private List<RollCallInfo.ClassInfoBean.ManagedClassDataBean> createdData;
     private String type;
@@ -55,6 +55,8 @@ public class HomeClassSection extends StatelessSection {
     private JSONObject jsonObject;
     private AlertDialog alertDialog;
     private SwipeRefreshLayout mSwipeRefreshLayout;
+    private AppCompatActivity mActivity;
+    private static onSignInSuccess onSignInSuccess;
 
 
     private static AMapLocation mLocation; //当前点的位置
@@ -68,7 +70,7 @@ public class HomeClassSection extends StatelessSection {
 
 
     public HomeClassSection(RollCallInfo.ClassInfoBean data, String type, SwipeRefreshLayout mSwipeRefreshLayout,
-            Context context) {
+                            Context context) {
         super(R.layout.layout_home_class_header, R.layout.layout_home_class);
         this.jointedData = data.getJoinedClassData();
         this.createdData = data.getManagedClassData();
@@ -79,6 +81,7 @@ public class HomeClassSection extends StatelessSection {
         initAmapLocation();
         initDialog();
     }
+
 
 
     @Override
@@ -101,10 +104,15 @@ public class HomeClassSection extends StatelessSection {
                 final RollCallInfo.ClassInfoBean.JoinedClassDataBean joinedClassDataBean = jointedData.get(position);
                 itemViewHolder.mClassName.setText(joinedClassDataBean.getJoinedClassName());
                 itemViewHolder.mClassDuration.setText(getDtime(joinedClassDataBean.getJoinedClassTime()));
-                if (joinedClassDataBean.isSignable()) {
+
+
+                if (joinedClassDataBean.getState().equals("0")) {
                     itemViewHolder.mBtn.setText(R.string.not_signed_in);
                     itemViewHolder.mBtn.setBackgroundResource(R.drawable.btn_rollcall_green);
+                    if(onSignInSuccess!=null){
+                        onSignInSuccess.setSignInStatus(itemViewHolder);
 
+                    }
                     itemViewHolder.mBtn.setOnClickListener(v -> {
 
                         Intent intent = new Intent(mContext, SignInActivity.class);
@@ -115,13 +123,21 @@ public class HomeClassSection extends StatelessSection {
                         mContext.startActivity(intent);
 
 
+
                     });
 
-                } else {
+                } else if (joinedClassDataBean.getState().equals("1")){
                     itemViewHolder.mBtn.setText(R.string.signed_in);
+                    itemViewHolder.mBtn.setBackgroundResource(R.drawable.btn_rollcall_blue);
+
+                }else if (joinedClassDataBean.getState().equals("2")){
+                    itemViewHolder.mBtn.setText(R.string.finished);
                     itemViewHolder.mBtn.setBackgroundResource(R.drawable.btn_rollcall_gray);
 
                 }
+
+
+
                 break;
             case CREATE_DATA:
                 final RollCallInfo.ClassInfoBean.ManagedClassDataBean managedClassData = createdData.get(position);
@@ -153,11 +169,11 @@ public class HomeClassSection extends StatelessSection {
                         Intent intent = new Intent(mContext, RollCallResultActivity.class);
 
 
-                        mRecordId = PreferenceUtil.getString(createdData.get(position).getManagedClassId(),"wrong");
-                        intent.putExtra("record_id",mRecordId);
-                        intent.putExtra("class_title",itemViewHolder.mClassName.getText());
-                        intent.putExtra("classId",createdData.get(position).getManagedClassId());
-                        Log.i(TAG, "onBindItemViewHolder: "+mRecordId);
+                        mRecordId = PreferenceUtil.getString(createdData.get(position).getManagedClassId(), "wrong");
+                        intent.putExtra("record_id", mRecordId);
+                        intent.putExtra("class_title", itemViewHolder.mClassName.getText());
+                        intent.putExtra("classId", createdData.get(position).getManagedClassId());
+                        Log.i(TAG, "onBindItemViewHolder: " + mRecordId);
 
                         resetAbleRollCall(managedClassData.getManagedClassId());
 
@@ -167,6 +183,29 @@ public class HomeClassSection extends StatelessSection {
                     }
 
                 });
+
+                itemViewHolder.classBody.setOnClickListener(v -> {
+
+                    if (managedClassData.isAbleRollCall().equals("2")) {
+                        Intent intent = new Intent(mContext, RollCallResultActivity.class);
+
+
+                        mRecordId = PreferenceUtil.getString(createdData.get(position).getManagedClassId(), "wrong");
+                        intent.putExtra("record_id", mRecordId);
+                        intent.putExtra("class_title", itemViewHolder.mClassName.getText());
+                        intent.putExtra("classId", createdData.get(position).getManagedClassId());
+                        Log.i(TAG, "onBindItemViewHolder: " + mRecordId);
+
+                        resetAbleRollCall(managedClassData.getManagedClassId());
+
+                        mContext.startActivity(intent);
+                        itemViewHolder.mBtn.setText(R.string.roll_call_on);
+                        itemViewHolder.mBtn.setBackgroundResource(R.drawable.btn_rollcall_green);
+                    }
+
+                });
+
+
                 break;
 
         }
@@ -204,13 +243,16 @@ public class HomeClassSection extends StatelessSection {
     }
 
 
-    static class ItemViewHolder extends RecyclerView.ViewHolder {
+    public static class ItemViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.class_name)
         TextView mClassName;
         @BindView(R.id.class_duration)
         TextView mClassDuration;
         @BindView(R.id.item_btn_rollcall)
+        public
         TextView mBtn;
+        @BindView(R.id.class_body)
+        RelativeLayout classBody;
 
         ItemViewHolder(View itemView) {
             super(itemView);
@@ -298,9 +340,13 @@ public class HomeClassSection extends StatelessSection {
 
                         itemViewHolder.mBtn.setBackgroundResource(R.drawable.btn_rollcall_blue);
                         itemViewHolder.mBtn.setText(R.string.roll_calling);
+                        createdData.get(position).setAbleRollCall("1");
+
+
                         RxTimerUtil.timer(rollCallTime, number -> {
                                     itemViewHolder.mBtn.setText(R.string.roll_call_off);
                                     itemViewHolder.mBtn.setBackgroundResource(R.drawable.btn_rollcall_gray);
+                                    createdData.get(position).setAbleRollCall("2");
                                     mSwipeRefreshLayout.setEnabled(true);
 
                                 }
@@ -423,6 +469,18 @@ public class HomeClassSection extends StatelessSection {
         });
 
 
-
     }
+
+    public interface onSignInSuccess {
+        public void setSignInStatus(ItemViewHolder itemViewHolder);
+    }
+
+    public static void setSignInStatus(onSignInSuccess myOnSignInSuccess) {
+        onSignInSuccess = myOnSignInSuccess;
+    }
+
+
+
+
+
 }

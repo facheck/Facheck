@@ -17,7 +17,7 @@
         android:background="@drawable/layer_list_draw"
         android:textSize="18sp"
         android:digits="0123456789"
-        android:textColor="#CDCDC1"
+        android:textColor="@color/black_80"
         android:maxLength="11"
         android:layout_marginHorizontal="25dp"
         android:hint="  手机号" />
@@ -36,7 +36,7 @@
             android:background="@color/subColorPrimary"
             android:textSize="18sp"
             android:digits="0123456789"
-            android:textColor="#CDCDC1"
+            android:textColor="@color/black_80"
             android:maxLength="6"
             android:layout_marginLeft="25dp"
             android:hint="  验证码" />
