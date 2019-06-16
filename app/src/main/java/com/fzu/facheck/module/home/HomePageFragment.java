@@ -93,7 +93,6 @@ public class HomePageFragment extends RxLazyFragment  {
     private void initToolBar() {
         mToolbar.setTitle("");
         mtoolbar_title.setText(date);
-        ((MainActivity) getActivity()).setSupportActionBar(mToolbar);
 
     }
 

@@ -104,6 +104,7 @@ public class SignInActivity extends RxBaseActivity {
             }
         });
         initToolBar();
+        initDialog();
 
         selfile.setOnClickListener(v -> {
             if (selfile.getDrawable() == null) {
@@ -239,6 +240,21 @@ public class SignInActivity extends RxBaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public void initDialog() {
+
+
+        alertDialog = new AlertDialog(this);
+        alertDialog.setCancelOnclickListener(new AlertDialog.cancelOnclickListener() {
+            @Override
+            public void onCancelClick() {
+                alertDialog.dismiss();
+            }
+        });
+
+
+
+
+    }
 
 
     private RequestBody initRequestbody() {

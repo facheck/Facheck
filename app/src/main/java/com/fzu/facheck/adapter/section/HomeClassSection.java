@@ -109,16 +109,18 @@ public class HomeClassSection extends StatelessSection {
                 if (joinedClassDataBean.getState().equals("0")) {
                     itemViewHolder.mBtn.setText(R.string.not_signed_in);
                     itemViewHolder.mBtn.setBackgroundResource(R.drawable.btn_rollcall_green);
-                    if(onSignInSuccessListener!=null){
-                        onSignInSuccessListener.setOnSignInSuccessListener(itemViewHolder);
 
-                    }
                     itemViewHolder.mBtn.setOnClickListener(v -> {
 
                         Intent intent = new Intent(mContext, SignInActivity.class);
 
                         intent.putExtra("class_id", joinedClassDataBean.getJoinedClassId());
                         intent.putExtra("class_title", itemViewHolder.mClassName.getText());
+
+                        if(onSignInSuccessListener!=null){
+                            onSignInSuccessListener.setOnSignInSuccessListener(itemViewHolder);
+
+                        }
 
                         mContext.startActivity(intent);
 
