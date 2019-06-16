@@ -201,7 +201,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="默认加入课表"
+        android:text="邀请码用于学生加入班级"
         android:gravity="center"
         android:textSize="15dp"
         android:layout_marginTop="6dp"

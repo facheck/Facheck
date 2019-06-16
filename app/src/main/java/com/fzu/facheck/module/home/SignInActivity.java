@@ -78,12 +78,9 @@ public class SignInActivity extends RxBaseActivity {
     private Bitmap bitmap = null;
     private static final int TAKE_POTHO = 1;
     private File outImage;
-    private MaterialDialog waitForDialog;
-    private MaterialDialog reminderDialog;
     private AlertDialog alertDialog;
     private JSONObject jsonObject;
-    private AMapLocation mLocation;
-    private HomeClassSection.onSignInSuccess onSignInSuccess;
+    private AMapLocation myLocation;
 
 
     @Override
@@ -100,11 +97,13 @@ public class SignInActivity extends RxBaseActivity {
             mClassId = newIntent.getStringExtra(ConstantUtil.EXTRA_CLASS_ID);
         }
 
-        mLocation = HomeClassSection.getmLocation();
-
-        initDialog();
+        HomeClassSection.setOnSignInListener(new HomeClassSection.OnSignInListener() {
+            @Override
+            public void setOnSignInListener(AMapLocation mLocation) {
+                myLocation = mLocation;
+            }
+        });
         initToolBar();
-        initBaseDialog();
 
         selfile.setOnClickListener(v -> {
             if (selfile.getDrawable() == null) {
@@ -186,7 +185,7 @@ public class SignInActivity extends RxBaseActivity {
                     alertDialog.showup();
                     alertDialog.show();
 
-                } else if (mLocation == null) {
+                } else if (myLocation == null) {
                     alertDialog.setTitle("签到失败！");
                     alertDialog.setType("failure");
                     alertDialog.setMessage("当前网络状况不稳定\n请检查网络连接状况！");
@@ -240,35 +239,7 @@ public class SignInActivity extends RxBaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void initDialog() {
 
-        waitForDialog = new MaterialDialog.Builder(this)
-                .content("正在上传和识别...")
-                .widgetColor(getResources().getColor(R.color.colorPrimary))
-                .progress(true, -1)//等待图标 true=圆形icon false=进度条
-                .canceledOnTouchOutside(false)//点击外部不取消对话框
-                .build();
-
-        alertDialog = new AlertDialog(this);
-        alertDialog.setCancelOnclickListener(new AlertDialog.cancelOnclickListener() {
-            @Override
-            public void onCancelClick() {
-                alertDialog.dismiss();
-            }
-        });
-
-
-
-
-    }
-    public void initBaseDialog() {
-
-        reminderDialog = new MaterialDialog.Builder(this)
-                .positiveColor(getResources().getColor(R.color.colorPrimary))
-                .positiveText("确认")
-                .build();
-
-    }
 
     private RequestBody initRequestbody() {
 
@@ -277,8 +248,8 @@ public class SignInActivity extends RxBaseActivity {
         try {
             jsonObject.put("comparedPhoto", photo);
 
-            jsonObject.put("longitude", mLocation.getLongitude());
-            jsonObject.put("latitude", mLocation.getLatitude());
+            jsonObject.put("longitude", myLocation.getLongitude());
+            jsonObject.put("latitude", myLocation.getLatitude());
 
             String phone_number = PreferenceUtil.getString(ConstantUtil.PHONE_NUMBER, "wrong");
 
@@ -309,9 +280,9 @@ public class SignInActivity extends RxBaseActivity {
                             alertDialog.setTitle("签到成功！");
                             alertDialog.setType("success");
                             alertDialog.setMessage("好好学习哦！");
-                            HomeClassSection.setSignInStatus(new HomeClassSection.onSignInSuccess() {
+                            HomeClassSection.setOnSignInSuccessListener(new HomeClassSection.OnSignInSuccessListener() {
                                 @Override
-                                public void setSignInStatus(HomeClassSection.ItemViewHolder itemViewHolder) {
+                                public void setOnSignInSuccessListener(HomeClassSection.ItemViewHolder itemViewHolder) {
                                     itemViewHolder.mBtn.setText(R.string.signed_in);
                                     itemViewHolder.mBtn.setBackgroundResource(R.drawable.btn_rollcall_blue);
                                 }

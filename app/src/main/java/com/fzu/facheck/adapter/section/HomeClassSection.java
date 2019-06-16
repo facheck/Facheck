@@ -55,8 +55,8 @@ public class HomeClassSection extends StatelessSection {
     private JSONObject jsonObject;
     private AlertDialog alertDialog;
     private SwipeRefreshLayout mSwipeRefreshLayout;
-    private AppCompatActivity mActivity;
-    private static onSignInSuccess onSignInSuccess;
+    private static OnSignInSuccessListener onSignInSuccessListener;
+    private static OnSignInListener onSignInListener;
 
 
     private static AMapLocation mLocation; //当前点的位置
@@ -109,8 +109,8 @@ public class HomeClassSection extends StatelessSection {
                 if (joinedClassDataBean.getState().equals("0")) {
                     itemViewHolder.mBtn.setText(R.string.not_signed_in);
                     itemViewHolder.mBtn.setBackgroundResource(R.drawable.btn_rollcall_green);
-                    if(onSignInSuccess!=null){
-                        onSignInSuccess.setSignInStatus(itemViewHolder);
+                    if(onSignInSuccessListener!=null){
+                        onSignInSuccessListener.setOnSignInSuccessListener(itemViewHolder);
 
                     }
                     itemViewHolder.mBtn.setOnClickListener(v -> {
@@ -320,9 +320,6 @@ public class HomeClassSection extends StatelessSection {
         return requestBody;
     }
 
-    public static AMapLocation getmLocation() {
-        return mLocation;
-    }
 
     private void uploadData(int position, ItemViewHolder itemViewHolder) {
         RetrofitHelper.getRollCallAPI()
@@ -439,6 +436,9 @@ public class HomeClassSection extends StatelessSection {
             if (amapLocation != null) {
                 if (amapLocation.getErrorCode() == 0) {
                     mLocation = amapLocation;
+                    if(onSignInListener!=null){
+                        onSignInListener.setOnSignInListener(mLocation);
+                    }
                     Log.e("loc", String.valueOf(mLocation.getLongitude()) + "   " + mLocation.getLatitude());
                 } else {
                     //定位失败时，可通过ErrCode（错误码）信息来确定失败的原因，errInfo是错误信息，详见错误码表。
@@ -471,12 +471,20 @@ public class HomeClassSection extends StatelessSection {
 
     }
 
-    public interface onSignInSuccess {
-        public void setSignInStatus(ItemViewHolder itemViewHolder);
+    public interface OnSignInSuccessListener{
+        public void setOnSignInSuccessListener(ItemViewHolder itemViewHolder);
     }
 
-    public static void setSignInStatus(onSignInSuccess myOnSignInSuccess) {
-        onSignInSuccess = myOnSignInSuccess;
+    public static void setOnSignInSuccessListener(OnSignInSuccessListener mOnSignInSuccessListener) {
+        onSignInSuccessListener = mOnSignInSuccessListener;
+    }
+
+    public interface OnSignInListener {
+        public void setOnSignInListener(AMapLocation mLocation);
+    }
+
+    public static void setOnSignInListener(HomeClassSection.OnSignInListener mOnsignInlistener) {
+        onSignInListener = mOnsignInlistener;
     }
 
 
