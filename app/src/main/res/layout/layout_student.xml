@@ -173,6 +173,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center" />
+    <TextView
+        android:id="@+id/hintEmpty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:visibility="gone"
+        android:layout_gravity="center"
+        android:textSize="17sp"
+        android:text="该同学已被移出班级!"/>
     <LinearLayout
         android:id="@+id/exitclass"
         android:layout_width="match_parent"

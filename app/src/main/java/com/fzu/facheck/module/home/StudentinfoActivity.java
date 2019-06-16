@@ -46,6 +46,8 @@ public class StudentinfoActivity extends RxBaseActivity {
     @BindView(R.id.student_info)
     LinearLayout linearLayout;
 
+    @BindView(R.id.hintEmpty)
+    TextView hintText;
     @BindView(R.id.student_name)
     TextView nameText;
     @BindView(R.id.phone_number)
@@ -116,6 +118,12 @@ public class StudentinfoActivity extends RxBaseActivity {
                         rateText.setText(resultbean.attendanceRatio);
                         phoneNumber=resultbean.phoneNumber;
                         phoneText.setText(resultbean.phoneNumber);
+                    }
+                    else if(resultbean.code.equals("1801")){
+                        linearLayout.setVisibility(View.GONE);
+                        exitclass.setVisibility(View.GONE);
+                        mCustomEmptyView.setVisibility(View.GONE);
+                        hintText.setVisibility(View.VISIBLE);
                     }
                     else
                         initEmptyView();

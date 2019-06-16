@@ -25,14 +25,14 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:orientation="horizontal"
-        android:layout_marginTop="17dp"
+        android:layout_marginTop="19dp"
         android:layout_height="wrap_content">
         <EditText
             android:id="@+id/varifi"
             android:layout_weight="2"
             android:layout_width="0dp"
             android:layout_height="37sp"
-            android:layout_marginTop="2dp"
+            android:layout_marginTop="1.7dp"
             android:background="@color/subColorPrimary"
             android:textSize="18sp"
             android:digits="0123456789"

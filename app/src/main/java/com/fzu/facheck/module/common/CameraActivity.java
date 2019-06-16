@@ -376,8 +376,10 @@ public class CameraActivity extends RxBaseActivity {
                         FileOutputStream outputStream = null;
                         try {
                             outputStream = new FileOutputStream(PhotoUtil.getPath());
-                            outputStream.write(bytes);
-                            bytes = null;
+                            if(bytes!=null) {
+                                outputStream.write(bytes);
+                                bytes = null;
+                            }
                         } catch (IOException e) {
                             e.printStackTrace();
                         } finally {
